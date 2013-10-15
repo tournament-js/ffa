@@ -1,0 +1,30 @@
+{
+  "name": "ffa",
+  "description": "Free-for-all elimination tournaments",
+  "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "clux/ffa"
+  },
+  "keywords": [
+    "free-for-all",
+    "elimination",
+    "tournament"
+  ],
+  "main": "ffa.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "dependencies": {
+    "interlude": "~1.0.2",
+    "tournament": "~0.15.0"
+  },
+  "devDependencies": {
+    "tap": "~0.4.4"
+  },
+  "bugs": {
+    "url": "http://github.com/clux/ffa/issues"
+  },
+  "license": "MIT"
+}
