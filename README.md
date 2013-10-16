@@ -1,4 +1,7 @@
-# FFA elimination tournaments [![Build Status](https://secure.travis-ci.org/clux/ffa.png)](http://travis-ci.org/clux/ffa) [![Dependency Status](https://david-dm.org/clux/ffa.png)](https://david-dm.org/clux/ffa)
+# FFA elimination tournaments
+[![Build Status](https://secure.travis-ci.org/clux/ffa.png)](http://travis-ci.org/clux/ffa)
+[![Dependency Status](https://david-dm.org/clux/ffa.png)](https://david-dm.org/clux/ffa)
+
 
     Stability: 2 - Unstable
 
