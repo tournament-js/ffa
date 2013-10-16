@@ -14,7 +14,9 @@ var ffa = new FFA(16, [4, 4, 4], [2, 2]); // 16 players in matches of 4 each rou
 ```
 
 ## Limits
-TODO:
+To pipe the top `n` players into another tournament set `limit` to `true` in the optional fourth argument to the constructor.
+
+This will cause an additional scoring limitation on the final round for the scores be disambiguate the top limit players with the top (limit+1)th player.
 
 ## Match Ids
 Like all tournament types, matches have an `id` object that contains three values all in `{1, 2, ...}`:
