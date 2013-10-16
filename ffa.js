@@ -182,48 +182,38 @@ FFA.prototype.unscorable = function (id, score, allowPast) {
   return null;
 };
 
+var prepRound = function (currRnd, nxtRnd, adv) {
+  var top = currRnd.map(function (m) {
+    return $.zip(m.p, m.m).sort(Base.compareZip).slice(0, adv);
+  });
+
+  // now flatten and sort across matches
+  // this essentially re-seeds players for the next round
+  top = $.pluck(0, $.flatten(top).sort(Base.compareZip));
+
+  // re-find group size from maximum length of zeroed player array in next round
+  var grs = $.maximum($.pluck('length', $.pluck('p', nxtRnd)));
+
+  // set all next round players with the fairly grouped set
+  algs.groups(top.length, grs).forEach(function (group, k) {
+    // replaced nulled out player array with seeds mapped to corr. top placers
+    nxtRnd[k].p = group.map(function (seed) {
+      return top[seed-1]; // NB: top is zero indexed
+    });
+  });
+};
 
 // updates ms in place and returns whether or not anything changed
 FFA.prototype.score = function (id, score) {
-  // 0. error handling - if this fails client didnt guard so we log
-  var invReason = this.unscorable(id, score, true);
-  if (invReason !== null) {
-    console.error("failed scoring FFA match %s with %j", idString(id), score);
-    console.error("reason:", invReason);
-    return false;
+  if (Base.prototype.score.call(this, id, score)) {
+    var adv = this.advs[id.r - 1] || 0;
+    var currRnd = this.findMatches({r: id.r});
+    if (currRnd.every($.get('m')) && adv > 0) {
+      prepRound(currRnd, this.findMatches({r: id.r + 1}), adv);
+    }
+    return true;
   }
-
-  // 1. score match
-  var m = this.findMatch(id);
-  m.m = score; // only map scores are relevant for progression
-
-  // prepare next round iff all matches in current round were scored
-  var adv = this.advs[id.r - 1] || 0;
-  var currRnd = this.findMatches({r: id.r});
-  var rndScored = currRnd.every($.get('m'));
-  if (rndScored && adv > 0) {
-    // TODO: more base helper usage?
-    var top = currRnd.map(function (m) {
-      return $.zip(m.p, m.m).sort(Base.compareZip).slice(0, adv);
-    });
-
-    // now flatten and sort across matches
-    // this essentially re-seeds players for the next round
-    top = $.pluck(0, $.flatten(top).sort(Base.compareZip));
-
-    // re-find group size from maximum length of zeroed player array in next round
-    var nxtRnd = this.findMatches({r: id.r + 1});
-    var grs = $.maximum($.pluck('length', $.pluck('p', nxtRnd)));
-
-    // set all next round players with the fairly grouped set
-    algs.groups(top.length, grs).forEach(function (group, k) {
-      // replaced nulled out player array with seeds mapped to corr. top placers
-      nxtRnd[k].p = group.map(function (seed) {
-        return top[seed-1]; // NB: top is zero indexed
-      });
-    });
-  }
-  return true;
+  return false;
 };
 
 FFA.prototype.upcoming = function (playerId) {
