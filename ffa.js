@@ -230,10 +230,7 @@ FFA.prototype.upcoming = function (playerId) {
   if (m) {
     // will he advance to nextRound ?
     var adv = this.advs[m.id.r - 1];
-    var advanced = $.zip(m.p, m.m).sort(Base.compareZip).some(function (ps, k) {
-      return (k <= adv && ps[0] === playerId); // must be in the top adv
-    });
-    if (advanced) {
+    if (Base.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
       return {s: 1, r: m.id.r + 1};
     }
   }
@@ -311,10 +308,9 @@ FFA.prototype.results = function () {
         // but we must positions winners as well (top adv each match) in this rnd
         // as nothing else does this in this special case
         rnd.forEach(function (m) {
-          var winners = $.zip(m.p, m.m).sort(Base.compareZip).slice(0, adv);
-
-          winners.forEach(function (w, i) {
-            var resEl = res[w[0] - 1];
+          // loop through winners
+          Base.sorted(m).slice(0, adv).forEach(function (w, i) {
+            var resEl = res[w - 1];
             // no adv set for this round so must also increment wins for these
             resEl.wins += 1;
             // their final position shall be tied between groups, and desc within
@@ -329,10 +325,9 @@ FFA.prototype.results = function () {
         // start at: numPlayers - (numPlayers - adv*numGroups) + 1
         var start = rndPs.length - (rndPs.length - adv*rnd.length) + 1;
 
-        // get the bottom 'half'
-        var losers = $.zip(m.p, m.m).sort(Base.compareZip).slice(adv);
-        losers.forEach(function (l, i) {
-          var resEl = res[l[0] - 1];
+        // loop through losers
+        Base.sorted(m).slice(adv).forEach(function (l, i) {
+          var resEl = res[l - 1];
           if (i === 0 && adv === 0) {
             // set wins +1 on actual winner in `limit`-less final
             resEl.wins += 1;
