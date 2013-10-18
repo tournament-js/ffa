@@ -154,7 +154,7 @@ function FFA(numPlayers, grs, advs, opts) {
   this.advs = advs;
   this.limit = opts ? opts.limit | 0 : 0;
   this.numPlayers = numPlayers;
-  Base.call(this, FFA, elimination(numPlayers, grs, advs, this.limit));
+  Base.call(this, elimination(numPlayers, grs, advs, this.limit));
 }
 FFA.prototype = Object.create(Base.prototype);
 FFA.parse = Base.parse.bind(null, FFA);
@@ -247,17 +247,8 @@ var isDone = function (rnd) {
 };
 
 FFA.prototype.results = function () {
-  var res = [];
-  for (var s = 0; s < this.numPlayers; s += 1) {
-    // TODO: best scores per player?
-    res[s] = {
-      seed : s + 1,
-      sum  : 0,
-      wins : 0,
-      pos  : this.numPlayers // initialize to last place if no rounds played
-    };
-  }
-
+  // TODO: best scores?
+  var res = Base.prototype.results.call(this, { sum: 0 });
   var advs = this.advs;
   var maxround = 1;
   for (var i = 0; i < this.matches.length; i += 1) {
