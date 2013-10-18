@@ -189,31 +189,25 @@ var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
       }
     }
     return null;
+  },
+  upcoming: function (playerId) {
+    // if player reached currentRound, he may be waiting for generation of nextRound
+    var m = $.firstBy(function (m) {
+      return m.p.indexOf(playerId) >= 0 && m.m;
+    }, this.currentRound() || []);
+
+    if (m) {
+      // will he advance to nextRound ?
+      var adv = this.advs[m.id.r - 1];
+      if (Base.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
+        return {s: 1, r: m.id.r + 1};
+      }
+    }
   }
 });
 
 FFA.invalid = invalid;
 FFA.idString = idString;
-
-FFA.prototype.upcoming = function (playerId) {
-  var id = Base.prototype.upcoming.call(this, playerId);
-  if (id) {
-    return id; // player not waiting for new rounds - match ready
-  }
-
-  // if player reached currentRound, he may be waiting for generation of nextRound
-  var m = $.firstBy(function (m) {
-    return m.p.indexOf(playerId) >= 0 && m.m;
-  }, this.currentRound() || []);
-
-  if (m) {
-    // will he advance to nextRound ?
-    var adv = this.advs[m.id.r - 1];
-    if (Base.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
-      return {s: 1, r: m.id.r + 1};
-    }
-  }
-};
 
 // helpers for results' round loop
 var isReady = function (rnd) {
