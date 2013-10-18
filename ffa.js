@@ -160,6 +160,7 @@ FFA.prototype = Object.create(Base.prototype);
 FFA.parse = Base.parse.bind(null, FFA);
 FFA.invalid = invalid;
 FFA.idString = idString;
+FFA.prototype.rep = idString; // for now
 
 FFA.prototype.unscorable = function (id, score, allowPast) {
   var invReason = Base.prototype.unscorable.call(this, id, score, allowPast);
