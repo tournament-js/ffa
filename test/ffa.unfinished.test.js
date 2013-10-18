@@ -54,7 +54,7 @@ test("ffa 16 4 2 unfinished no limits", function (t) {
   var reason = FFA.invalid(16, [4,4], [2], {limit: 0});
   t.type(reason, 'string', "Should not be able to create non-finals without limits");
   var ffa = new FFA(16, [4,4], [2], {limit: 0});
-  t.deepEqual(ffa.matches, [], "ffa creation should also fail");
+  t.equal(ffa.matches, undefined, "ffa creation should also fail");
 
   t.end();
 });

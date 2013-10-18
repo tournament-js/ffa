@@ -10,13 +10,6 @@ var idString = function (id) {
   return "R" + id.r + " M" + id.m;
 };
 
-var unspecify = function (grps) {
-  return grps.map(function (grp) {
-    return $.replicate(grp.length, Base.NONE);
-  });
-};
-
-
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
   if (Math.ceil(grs) !== grs || Math.ceil(adv) !== adv) {
@@ -65,6 +58,7 @@ var finalInvalid = function (leftOver, limit, gLast) {
 };
 
 var invalid = function (np, grs, adv, opts) {
+  opts = opts || {};
   if (!Number.isFinite(np) || Math.ceil(np) !== np || np < 2) {
     return "number of players must be at least 2";
   }
@@ -96,7 +90,7 @@ var invalid = function (np, grs, adv, opts) {
     np = numGroups*a;
   }
   // last round and limit checks
-  var invFinReason = finalInvalid(np, (opts && opts.limit) | 0, grs[grs.length-1]);
+  var invFinReason = finalInvalid(np, opts.limit | 0, grs[grs.length-1]);
   if (invFinReason !== null) {
     return "final round: " + invFinReason;
   }
@@ -105,16 +99,13 @@ var invalid = function (np, grs, adv, opts) {
   return null;
 };
 
-var elimination = function (np, grs, adv, limit) {
-  var invReason = invalid(np, grs, adv, {limit: limit});
-  if (invReason !== null) {
-    console.error("Invalid FFA configuration %dp sizes=%j, advs=%j, opts=%j"
-      , np, grs, adv, {limit: limit});
-    console.error("reason: %s", invReason);
-    return {};
-  }
-  //console.log('creating %dp FFA elimination (%j/%j advancing)', np, adv, grs);
+var unspecify = function (grps) {
+  return grps.map(function (grp) {
+    return $.replicate(grp.length, Base.NONE);
+  });
+};
 
+var elimination = function (np, grs, adv) {
   var matches = []; // pushed in sort order
   // rounds created iteratively - know configuration valid at this point so just
   // repeat the calculation in the validation
@@ -145,44 +136,6 @@ var elimination = function (np, grs, adv, limit) {
   return matches;
 };
 
-// interface
-function FFA(numPlayers, grs, advs, opts) {
-  if (!(this instanceof FFA)) {
-    return new FFA(numPlayers, grs, advs, opts);
-  }
-  this.version = 1;
-  this.advs = advs;
-  this.limit = opts ? opts.limit | 0 : 0;
-  this.numPlayers = numPlayers;
-  Base.call(this, elimination(numPlayers, grs, advs, this.limit));
-}
-FFA.prototype = Object.create(Base.prototype);
-FFA.parse = Base.parse.bind(null, FFA);
-FFA.invalid = invalid;
-FFA.idString = idString;
-FFA.prototype.rep = idString; // for now
-
-FFA.prototype.unscorable = function (id, score, allowPast) {
-  var invReason = Base.prototype.unscorable.call(this, id, score, allowPast);
-  if (invReason !== null) {
-    return invReason;
-  }
-  var adv = this.advs[id.r - 1] || 0;
-  if (adv > 0 && score[adv] === score[adv - 1]) {
-    return "scores must unambiguous decide who advances";
-  }
-  if (!adv && this.limit > 0) {
-    // number of groups in last round is the match number of the very last match
-    // because of the ordering this always works!
-    var lastNG = this.matches[this.matches.length-1].id.m;
-    var cutoff = this.limit/lastNG; // NB: lastNG divides limit (from finalInvalid)
-    if (score[cutoff] === score[cutoff - 1]) {
-      return "scores must decide who advances in final round with limits";
-    }
-  }
-  return null;
-};
-
 var prepRound = function (currRnd, nxtRnd, adv) {
   var top = currRnd.map(function (m) {
     return $.zip(m.p, m.m).sort(Base.compareZip).slice(0, adv);
@@ -204,18 +157,43 @@ var prepRound = function (currRnd, nxtRnd, adv) {
   });
 };
 
-// updates ms in place and returns whether or not anything changed
-FFA.prototype.score = function (id, score) {
-  if (Base.prototype.score.call(this, id, score)) {
+
+// interface
+var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
+  init: function (initParent) {
+    this.version = 1;
+    this.limit = this.opts ? this.opts.limit | 0 : 0;
+    initParent(elimination(this.numPlayers, this.grs, this.advs));
+    delete this.opts;
+    delete this.grs;
+  },
+  score: function (id/*, score*/) {
     var adv = this.advs[id.r - 1] || 0;
     var currRnd = this.findMatches({r: id.r});
     if (currRnd.every($.get('m')) && adv > 0) {
       prepRound(currRnd, this.findMatches({r: id.r + 1}), adv);
     }
-    return true;
+  },
+  unscorable: function (id, score) {
+    var adv = this.advs[id.r - 1] || 0;
+    if (adv > 0 && score[adv] === score[adv - 1]) {
+      return "scores must unambiguous decide who advances";
+    }
+    if (!adv && this.limit > 0) {
+      // number of groups in last round is the match number of the very last match
+      // because of the ordering this always works!
+      var lastNG = this.matches[this.matches.length-1].id.m;
+      var cutoff = this.limit/lastNG; // NB: lastNG divides limit (from finalInvalid)
+      if (score[cutoff] === score[cutoff - 1]) {
+        return "scores must decide who advances in final round with limits";
+      }
+    }
+    return null;
   }
-  return false;
-};
+});
+
+FFA.invalid = invalid;
+FFA.idString = idString;
 
 FFA.prototype.upcoming = function (playerId) {
   var id = Base.prototype.upcoming.call(this, playerId);
