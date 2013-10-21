@@ -2,14 +2,6 @@ var $ = require('interlude')
   , Base = require('tournament')
   , algs = require('./balancer');
 
-// ffa has no concepts of sections yet so they're all 1
-var idString = function (id) {
-  if (!id.m) {
-    return "R" + id.r + " M X";
-  }
-  return "R" + id.r + " M" + id.m;
-};
-
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
   if (Math.ceil(grs) !== grs || Math.ceil(adv) !== adv) {
@@ -207,7 +199,13 @@ var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
 });
 
 FFA.invalid = invalid;
-FFA.idString = idString;
+FFA.idString = function (id) {
+  // ffa has no concepts of sections yet so they're all 1
+  if (!id.m) {
+    return "R" + id.r + " M X";
+  }
+  return "R" + id.r + " M" + id.m;
+};
 
 // helpers for results' round loop
 var isReady = function (rnd) {
