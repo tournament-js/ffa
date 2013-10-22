@@ -183,7 +183,7 @@ var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
     }
     return null;
   },
-  upcoming: function (playerId) {
+  limbo: function (playerId) {
     // if player reached currentRound, he may be waiting for generation of nextRound
     var m = $.firstBy(function (m) {
       return m.p.indexOf(playerId) >= 0 && m.m;
