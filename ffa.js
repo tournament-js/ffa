@@ -159,15 +159,16 @@ var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
     delete this.opts;
     delete this.grs;
   },
-  score: function (id/*, score*/) {
-    var adv = this.advs[id.r - 1] || 0;
-    var currRnd = this.findMatches({r: id.r});
+  progress: function (match) {
+    var adv = this.advs[match.id.r - 1] || 0;
+    var currRnd = this.findMatches({r: match.id.r});
     if (currRnd.every($.get('m')) && adv > 0) {
-      prepRound(currRnd, this.findMatches({r: id.r + 1}), adv);
+      prepRound(currRnd, this.findMatches({r: match.id.r + 1}), adv);
     }
   },
-  unscorable: function (id, score) {
-    var adv = this.advs[id.r - 1] || 0;
+  verify: function (match, score) {
+    console.log('got match for verify:', match, score);
+    var adv = this.advs[match.id.r - 1] || 0;
     if (adv > 0 && score[adv] === score[adv - 1]) {
       return "scores must unambiguous decide who advances";
     }
