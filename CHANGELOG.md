@@ -1,3 +1,7 @@
+0.2.1 / 2013-10-24
+==================
+  * Use group@0.1.0 for group algorithms
+
 0.2.0 / 2013-10-22
 ==================
   * Use tournament@0.16.0 interface

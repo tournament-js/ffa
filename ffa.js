@@ -1,6 +1,6 @@
 var $ = require('interlude')
-  , Base = require('tournament')
-  , algs = require('./balancer');
+  , group = require('group')
+  , Base = require('tournament');
 
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
@@ -71,7 +71,7 @@ var invalid = function (np, grs, adv, opts) {
     var g = grs[i];
     // calculate how big the groups are
     numGroups = Math.ceil(np / g);
-    var gActual = algs.reduceGroupSize(np, g, numGroups);
+    var gActual = group.minimalGroupSize(np, g, numGroups);
 
     // and ensure with group reduction that eliminationValid for reduced params
     var invReason = roundInvalid(np, gActual, a, numGroups);
@@ -105,11 +105,11 @@ var elimination = function (np, grs, adv) {
     var a = adv[i]
       , gs = grs[i]
       , numGroups = Math.ceil(np / gs)
-      , gsActual = algs.reduceGroupSize(np, gs, numGroups);
+      , gsActual = group.minimalGroupSize(np, gs, numGroups);
 
-    // irrelevant which gs we use as algs.groups reduces anyway
+    // irrelevant which gs we use as group() reduces
     // though might as well save it the effort and we need it here anyway
-    var grps = algs.groups(np, gsActual);
+    var grps = group(np, gsActual);
     if (numGroups !== grps.length) {
       throw new Error("internal FFA construction error");
     }
@@ -141,7 +141,7 @@ var prepRound = function (currRnd, nxtRnd, adv) {
   var grs = $.maximum($.pluck('length', $.pluck('p', nxtRnd)));
 
   // set all next round players with the fairly grouped set
-  algs.groups(top.length, grs).forEach(function (group, k) {
+  group(top.length, grs).forEach(function (group, k) {
     // replaced nulled out player array with seeds mapped to corr. top placers
     nxtRnd[k].p = group.map(function (seed) {
       return top[seed-1]; // NB: top is zero indexed
