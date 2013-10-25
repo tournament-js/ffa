@@ -2,12 +2,13 @@ var $ = require('interlude')
   , group = require('group')
   , Base = require('tournament');
 
+var isInteger = function (n) { // will be on Number in ES6
+  return Math.ceil(n) === n;
+};
+
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
-  if (Math.ceil(grs) !== grs || Math.ceil(adv) !== adv) {
-    return "individual group size and adv must all be integers";
-  }
-  if (Math.ceil(np) !== np || np < 2) {
+  if (np < 2) {
     return "needs at least 2 players";
   }
   if (grs < 3 || (numGroups === 1 && grs >= 2)) {
@@ -51,16 +52,16 @@ var finalInvalid = function (leftOver, limit, gLast) {
 
 var invalid = function (np, grs, adv, opts) {
   opts = opts || {};
-  if (!Number.isFinite(np) || Math.ceil(np) !== np || np < 2) {
+  if (!isInteger(np) || np < 2) {
     return "number of players must be at least 2";
   }
   if (!Array.isArray(grs) || !Array.isArray(adv)) {
     return "adv and grs must be arrays";
   }
-  if (!grs.length || !grs.every(Number.isFinite)) {
+  if (!grs.length || !grs.every(isInteger)) {
     return "grs must be a non-empty array of integers";
   }
-  if (!adv.every(Number.isFinite) || grs.length !== adv.length + 1) {
+  if (!adv.every(isInteger) || grs.length !== adv.length + 1) {
     return "adv must be an array of integers of length grs.length - 1";
   }
 
@@ -71,7 +72,7 @@ var invalid = function (np, grs, adv, opts) {
     var g = grs[i];
     // calculate how big the groups are
     numGroups = Math.ceil(np / g);
-    var gActual = group.minimalGroupSize(np, g, numGroups);
+    var gActual = group.minimalGroupSize(np, g);
 
     // and ensure with group reduction that eliminationValid for reduced params
     var invReason = roundInvalid(np, gActual, a, numGroups);
@@ -105,11 +106,8 @@ var elimination = function (np, grs, adv) {
     var a = adv[i]
       , gs = grs[i]
       , numGroups = Math.ceil(np / gs)
-      , gsActual = group.minimalGroupSize(np, gs, numGroups);
+      , grps = group(np, gs);
 
-    // irrelevant which gs we use as group() reduces
-    // though might as well save it the effort and we need it here anyway
-    var grps = group(np, gsActual);
     if (numGroups !== grps.length) {
       throw new Error("internal FFA construction error");
     }
@@ -155,6 +153,7 @@ var FFA = Base.sub('FFA', ['numPlayers', 'grs', 'advs', 'opts'], {
   init: function (initParent) {
     this.version = 1;
     this.limit = this.opts ? this.opts.limit | 0 : 0;
+    // TODO: grs do not seem to actually be reduced in `this` atm
     initParent(elimination(this.numPlayers, this.grs, this.advs));
     delete this.opts;
     delete this.grs;
@@ -218,9 +217,11 @@ var isDone = function (rnd) {
   return rnd.every($.get('m'));
 };
 
-FFA.prototype.results = function () {
-  // TODO: best scores?
-  var res = Base.prototype.results.call(this, { sum: 0 });
+FFA.prototype.initResult = function () {
+  return { sum: 0 }; // TODO: best scores?
+};
+
+FFA.prototype.stats = function (res) {
   var advs = this.advs;
   var maxround = 1;
   for (var i = 0; i < this.matches.length; i += 1) {
@@ -239,7 +240,7 @@ FFA.prototype.results = function () {
         if (j < adv) {
           res[pJ].wins += 1;
         }
-        res[pJ].sum += mJ;
+        res[pJ].for += mJ;
       }
     }
   }
