@@ -2,10 +2,6 @@ var $ = require('interlude')
   , group = require('group')
   , Base = require('tournament');
 
-var isInteger = function (n) { // will be on Number in ES6
-  return Math.ceil(n) === n;
-};
-
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
   if (np < 2) {
@@ -52,16 +48,16 @@ var finalInvalid = function (leftOver, limit, gLast) {
 
 var invalid = function (np, grs, adv, opts) {
   opts = opts || {};
-  if (!isInteger(np) || np < 2) {
+  if (!Base.isInteger(np) || np < 2) {
     return "number of players must be at least 2";
   }
   if (!Array.isArray(grs) || !Array.isArray(adv)) {
     return "adv and grs must be arrays";
   }
-  if (!grs.length || !grs.every(isInteger)) {
+  if (!grs.length || !grs.every(Base.isInteger)) {
     return "grs must be a non-empty array of integers";
   }
-  if (!adv.every(isInteger) || grs.length !== adv.length + 1) {
+  if (!adv.every(Base.isInteger) || grs.length !== adv.length + 1) {
     return "adv must be an array of integers of length grs.length - 1";
   }
 
