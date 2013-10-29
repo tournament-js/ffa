@@ -23,7 +23,7 @@ test("ffa 16 4 2", function (t) {
   t.equal(winss.length, 1, "all players have same wins");
   t.equal(winss[0], 0, "all won 0");
 
-  var sums = $.nub($.pluck('sum', res));
+  var sums = $.nub($.pluck('for', res));
   t.equal(sums.length, 1, "all players have same sum");
   t.equal(sums[0], 0, "all sum 0");
 
@@ -141,22 +141,22 @@ test("ffa 16 4 2", function (t) {
     if (p.seed === 1) {
       //t.equal(p.wins, 9, "1 won all 3 matches");
       t.equal(p.pos, 1, "1 placed highest");
-      t.equal(p.sum, 12, "sum scores for 1: 4 + 4 + 4");
+      t.equal(p.for, 12, "scores for 1: 4 + 4 + 4");
     }
     if (p.seed === 2) {
       //t.equal(p.wins, 8, "2 scored 1, 1, 2");
       t.equal(p.pos, 2, "2 placed 2nd");
-      t.equal(p.sum, 11, "sum scores for 2: 4 + 4 + 3");
+      t.equal(p.for, 11, "scores for 2: 4 + 4 + 3");
     }
     if (p.seed === 3) {
       //t.equal(p.wins, 6, "3 scored 1, 2, 3");
       t.equal(p.pos, 3, "3 placed 3rd");
-      t.equal(p.sum, 9, "sum scores for 3: 4 + 3 + 2");
+      t.equal(p.for, 9, "scores for 3: 4 + 3 + 2");
     }
     if (p.seed === 4) {
       //t.equal(p.wins, 5, "4 scored 1 2 4");
       t.equal(p.pos, 4, "4 placed 4th");
-      t.equal(p.sum, 8, "sum scores for 2: 4 + 3 + 1");
+      t.equal(p.for, 8, "scores for 2: 4 + 3 + 1");
     }
 
     // older results remain unaffected
@@ -206,7 +206,7 @@ test("ffa 81 3 1", function (t) {
   t.equal(winss.length, 1, "all players have same wins");
   t.equal(winss[0], 0, "all won 0");
 
-  var sums = $.nub($.pluck('sum', res));
+  var sums = $.nub($.pluck('for', res));
   t.equal(sums.length, 1, "all players have same sum");
   t.equal(sums[0], 0, "all sum 0");
 

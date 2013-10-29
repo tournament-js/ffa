@@ -2,7 +2,7 @@
   "name": "ffa",
   "description": "Free-for-all elimination tournaments",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "clux/ffa"
@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "interlude": "~1.0.2",
-    "group": "~0.1.0",
-    "tournament": "~0.16.0"
+    "group": "~0.2.0",
+    "tournament": "~0.17.1"
   },
   "devDependencies": {
     "tap": "~0.4.4"
