@@ -217,10 +217,7 @@ var isDone = function (rnd) {
   return rnd.every($.get('m'));
 };
 
-FFA.prototype.initResult = function () {
-  return { sum: 0 }; // TODO: best scores?
-};
-
+// TODO: best scores
 FFA.prototype.stats = function (res) {
   var advs = this.advs;
   var maxround = 1;
@@ -241,6 +238,7 @@ FFA.prototype.stats = function (res) {
           res[pJ].wins += 1;
         }
         res[pJ].for += mJ;
+        //res[pJ].against += (top[0][1] - mJ); // difference with winner
       }
     }
   }
@@ -309,8 +307,8 @@ FFA.prototype.stats = function (res) {
       });
     }
   });
-  // still sort also by sum in case people want to use that
-  return res.sort($.comparing('pos', +1, 'sum', -1));
+  // still sort also by maps for in case people want to use that
+  return res.sort($.comparing('pos', +1, 'for', -1));
 };
 
 

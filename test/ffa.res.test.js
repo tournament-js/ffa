@@ -206,7 +206,7 @@ test("ffa 81 3 1", function (t) {
   t.equal(winss.length, 1, "all players have same wins");
   t.equal(winss[0], 0, "all won 0");
 
-  var sums = $.nub($.pluck('sum', res));
+  var sums = $.nub($.pluck('for', res));
   t.equal(sums.length, 1, "all players have same sum");
   t.equal(sums[0], 0, "all sum 0");
 
