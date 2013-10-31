@@ -227,20 +227,9 @@ FFA.prototype.limbo = function (playerId) {
   }
 };
 
-// helpers for results' round loop
-var isReady = function (rnd) {
-  return rnd.some(function (m) {
-    return m.p.some($.neq(Base.NONE));
-  });
-};
-var isDone = function (rnd) {
-  return rnd.every($.get('m'));
-};
-
 // TODO: best scores
 FFA.prototype.stats = function (res) {
   var advs = this.advs;
-  var maxround = this.sizes.length;
   this.matches.filter($.get('m')).forEach(function (m) {
     var top = $.zip(m.p, m.m).sort(Base.compareZip);
     var adv = advs[m.id.r - 1] || 0;
@@ -259,69 +248,51 @@ FFA.prototype.stats = function (res) {
   });
 
   var limit = this.limit;
+  var maxround = this.sizes.length;
   // gradually improve scores for each player by looking at later and later rounds
   this.rounds().forEach(function (rnd, k) {
-    var adv = advs[k] || 0; // so we can do last round
-    var rndPs = $.flatten($.pluck('p', rnd));
+    var rndPs = $.flatten($.pluck('p', rnd)).filter($.neq(Base.NONE));
+    rndPs.forEach(function (p) {
+      res[p-1].pos = rndPs.length; // tie any players that got here
+    });
 
-    if (isDone(rnd)) {
+    var adv = advs[k] || 0; // zero advs in the last round deliberate
+    rnd.filter($.get('m')).forEach(function (m) {
+      // position the matches that have been played
       if (limit > 0 && k === maxround - 1) {
-        // this is the special case of a `limit`ed tournament
-        // it may not be a 'final' in the sense that rnd.length >= 1
-        // as the winnners goto a new tournament and losers are knocked out
-
-        if (rndPs.length < limit) {
-          // sanity check for own tests
-          throw new Error("FFA internal error - too few players for forwarding");
-        }
-        // figure out how many to advance from each round
-        // we know limit is a multiple of rnd.length
-        if (limit % rnd.length !== 0) {
-          throw new Error("FFA internal error - limit not multiple of maxrnd len");
-        }
         adv = limit / rnd.length;
-
         // losers fall through and are scored as any other done round with 'adv' set
         // but we must positions winners as well (top adv each match) in this rnd
         // as nothing else does this in this special case
-        rnd.forEach(function (m) {
-          // loop through winners
-          Base.sorted(m).slice(0, adv).forEach(function (w, i) {
-            var resEl = res[w - 1];
-            // no adv set for this round so must also increment wins for these
-            resEl.wins += 1;
-            // their final position shall be tied between groups, and desc within
-            resEl.pos = i*rnd.length + 1;
-          });
+        Base.sorted(m).slice(0, adv).forEach(function (w, i) {
+          var resEl = res[w - 1];
+          // no adv set for this round so must also increment wins for these
+          // TODO: correct? we have adv above.. wins probably get too many pluses
+          resEl.wins += 1;
+          // their final position shall be tied between groups, and desc within
+          resEl.pos = i*rnd.length + 1;
         });
       }
       // if round is done, position the ones not advancing from that round
       // collect and sort between round the ones after top adv
       // NB: in `limit`-less final, adv is zero, so everyone's treated as a loser
-      rnd.forEach(function (m) {
-        // start at: numPlayers - (numPlayers - adv*numGroups) + 1
-        var start = rndPs.length - (rndPs.length - adv*rnd.length) + 1;
 
-        // loop through losers
-        Base.sorted(m).slice(adv).forEach(function (l, i) {
-          var resEl = res[l - 1];
-          if (i === 0 && adv === 0) {
-            // set wins +1 on actual winner in `limit`-less final
-            resEl.wins += 1;
-          }
-          // tie x-placing losers between groups (at least pos-wise)
-          resEl.pos = start + i*rnd.length;
-        });
+      // start at: numPlayers - (numPlayers - adv*numGroups) + 1
+      var start = rndPs.length - (rndPs.length - adv*rnd.length) + 1;
+
+      // loop through losers
+      Base.sorted(m).slice(adv).forEach(function (l, i) {
+        var resEl = res[l - 1];
+        if (i === 0 && adv === 0) {
+          // set wins +1 on actual winner in `limit`-less final
+          resEl.wins += 1;
+        }
+        // tie x-placing losers between groups (at least pos-wise)
+        resEl.pos = start + i*rnd.length; // TODO: needs better breaking?
       });
-    }
-    else if (isReady(rnd)) {
-      // round is simply ready, make sure everyone who got here is tied
-      rndPs.forEach(function (p) {
-        // last place in round is simply number of players beneath
-        res[p-1].pos = rndPs.length;
-      });
-    }
+    });
   });
+
   // still sort also by maps for in case people want to use that
   return res.sort($.comparing('pos', +1, 'for', -1));
 };
