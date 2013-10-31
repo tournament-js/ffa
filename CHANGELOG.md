@@ -1,6 +1,7 @@
-0.4.0 / 2013-11-XX
+0.4.0 / 2013-10-31
 ==================
   * `sizes` and `advancers` now passed in as optional arguments
+  * Use tournament@0.18.0 interface
 
 0.3.0 / 2013-10-25
 ==================

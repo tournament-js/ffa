@@ -13,11 +13,18 @@ You must specify precisely the required group size for each round and how many t
 This is really the hardest part of an FFA elimination. There are essentially endless possibilities, and we will allow very exotic and adventurous ones as long as they are at least playable and non-trivial. See the [Ensuring Constructibility](./base.md#ensuring-constructibility) section for how to check your parameters.
 
 ```js
-var ffa = new FFA(16, [4, 4, 4], [2, 2]); // 16 players in matches of 4 each round, top 2 advances between each
+// 8 players in 1 match of 8
+var ffa = new FFA(8);
+
+// 16 players in matches of 4 each round, top 2 advances between each
+var ffa = new FFA(16, { sizes: [4, 4, 4], advancers: [2, 2] });
+
+// 15 players in groups of 5, limited so that the top 2 from each match can be picked
+var ffa = new FFA(15, { sizes: [5], limit: 6 });
 ```
 
 ## Limits
-To pipe the top `n` players into another tournament set `limit` to `true` in the optional fourth argument to the constructor.
+To pipe the top `n` players into another tournament set `limit` to `true` in the options argument.
 
 This will cause an additional scoring limitation on the final round for the scores be disambiguate the top limit players with the top (limit+1)th player.
 
