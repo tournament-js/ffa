@@ -4,7 +4,8 @@ var tap = require('tap')
   , FFA = require('../');
 
 test("ffa 5 [5] [] limit 4", function (t) {
-  var ffa = new FFA(5, [5], [], {limit: 4});
+  var opts = { sizes: [5], limit: 4 }
+  var ffa = new FFA(5, opts);
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,3,2,2]), "cannot score so we are tied at limit");
   t.ok(ffa.score(ms[0].id, [5,4,3,2,1]), "scoring works when untied");
@@ -18,7 +19,8 @@ test("ffa 5 [5] [] limit 4", function (t) {
 });
 
 test("ffa 10 [5] [] limit 4", function (t) {
-  var ffa = new FFA(10, [5], [], {limit: 4});
+  var opts = { sizes: [5] , limit: 4 };
+  var ffa = new FFA(10, opts);
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,4,2,1]), "cannot score so we are tied at limit/NG");
   t.ok(ffa.score(ms[0].id, [5,4,3,2,1]), "scoring of M1 works when untied");
@@ -34,7 +36,8 @@ test("ffa 10 [5] [] limit 4", function (t) {
 });
 
 test("ffa 15 [5] [] limit 6", function (t) {
-  var ffa = new FFA(15, [5], [], {limit: 6}); // limit must divide num groups
+  var opts = { sizes: [5] , limit: 6 };
+  var ffa = new FFA(15, opts); // limit must divide num groups
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,4,2,1]), "cannot score so we are tied at limit");
   t.ok(ffa.score(ms[0].id, [5,4,3,2,1]), "scoring of M1 works when untied");
@@ -51,16 +54,16 @@ test("ffa 15 [5] [] limit 6", function (t) {
 });
 
 test("ffa 16 4 2 unfinished no limits", function (t) {
-  var reason = FFA.invalid(16, [4,4], [2], {limit: 0});
+  var opts = { sizes: [4, 4], advancers: [2], limit: 0 };
+  var reason = FFA.invalid(16, opts);
   t.type(reason, 'string', "Should not be able to create non-finals without limits");
-  var ffa = new FFA(16, [4,4], [2], {limit: 0});
-  t.equal(ffa.matches, undefined, "ffa creation should also fail");
 
   t.end();
 });
 
 test("ffa 16 4 2 unfinished res limits", function (t) {
-  var ffaB = FFA(16, [4,4], [2], {limit: 4});
+  var opts = { sizes: [4, 4], advancers: [2], limit: 4 };
+  var ffaB = FFA(16, opts);
 
   // quick serialization test as only case atm
   var ffa = FFA.parse(ffaB + '')

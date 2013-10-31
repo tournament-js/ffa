@@ -5,8 +5,9 @@ var tap = require('tap')
 
 
 test("ffa 16 4 2 serialize", function (t) {
-  t.equal(FFA.invalid(16, [4,4,4], [2,2]), null, "can construct 16 4 2 FFA");
-  var ffa = new FFA(16, [4,4,4], [2,2]);
+  var opts = { sizes: [4,4,4], advancers: [2,2] };
+  t.equal(FFA.invalid(16, opts), null, "can construct 16 4 2 FFA");
+  var ffa = new FFA(16, opts);
   var ffa2 = FFA.parse(ffa + '');
 
   t.deepEqual(ffa.matches, ffa2.matches, "matches same");
@@ -27,8 +28,9 @@ var getMaxLen = function (rnd) {
 // currently will also work if you put [7, 7, 7]
 // because group reduction is automatic like before
 test("ffa 28 [7, 6, 6] [3, 3]", function (t) {
-  t.equal(FFA.invalid(28, [7,6,6], [3,3]), null, "can construct 28 7 3 FFA");
-  var ffa = new FFA(28, [7, 6, 6], [3, 3]);
+  var opts = { sizes: [7, 6, 6], advancers: [3, 3] };
+  t.equal(FFA.invalid(28, opts), null, "can construct 28 7 3 FFA");
+  var ffa = new FFA(28, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2})
@@ -49,8 +51,9 @@ test("ffa 28 [7, 6, 6] [3, 3]", function (t) {
 
 // nice layout, 32 8 2 ensure it's right
 test("ffa 32 8 2", function (t) {
-  t.equal(FFA.invalid(32, [8, 8], [2]), null, "can construct 32 8 2 FFA");
-  var ffa = new FFA(32, [8, 8], [2]);
+  var opts = { sizes: [8, 8], advancers: [2] };
+  t.equal(FFA.invalid(32, opts), null, "can construct 32 8 2 FFA");
+  var ffa = new FFA(32, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2});
@@ -66,8 +69,9 @@ test("ffa 32 8 2", function (t) {
 
 // nice layout, 25 5 1 ensure it's right
 test("ffa 25 5 1", function (t) {
-  t.equal(FFA.invalid(25, [5, 5], [1]), null, "can construct 25 5 1 FFA");
-  var ffa = new FFA(25, [5, 5], [1]);
+  var opts = { sizes: [5, 5], advancers: [1] };
+  t.equal(FFA.invalid(25, opts), null, "can construct 25 5 1 FFA");
+  var ffa = new FFA(25, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2});
@@ -83,10 +87,12 @@ test("ffa 25 5 1", function (t) {
 
 // awful layout: 28 7 3
 test("ffa 28 7 3", function (t) {
-  t.equal(FFA.invalid(28, [7,6,6], [3,3]), null, "can construct 28 7,6,6 3,3 FFA");
-  // would work for [7,7,7] also
-  t.equal(FFA.invalid(28, [7,7,7], [3,3]), null, "can construct 28 7,7,7 3,3 FFA");
-  var ffa = new FFA(28, [7,6,6], [3,3]);
+  var opts = { sizes: [7, 7, 7], advancers: [3, 3] };
+  t.equal(FFA.invalid(28, opts), null, "can construct 28 7,7,7 3,3 FFA");
+  // would work for [7,6,6] also
+  opts.sizes = [7,6,6];
+  t.equal(FFA.invalid(28, opts), null, "can construct 28 7,6,6 3,3 FFA");
+  var ffa = new FFA(28, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2})
@@ -106,8 +112,9 @@ test("ffa 28 7 3", function (t) {
 
 // difficult layout: 36 6 3 - reduce advancers for final
 test("ffa 28 7 3", function (t) {
-  t.equal(FFA.invalid(36, [6,6,6], [3,2]), null, "can construct 32 6,6,6 3,2 FFA");
-  var ffa = new FFA(36, [6,6,6], [3,2]);
+  var opts = { sizes: [6, 6, 6], advancers: [3, 2] };
+  t.equal(FFA.invalid(36, opts), null, "can construct 32 6,6,6 3,2 FFA");
+  var ffa = new FFA(36, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2})
@@ -127,8 +134,9 @@ test("ffa 28 7 3", function (t) {
 
 // difficult layout: 49 7 3 - reduces advancers for final
 test("ffa 49 7 3", function (t) {
-  t.equal(FFA.invalid(49, [7,7,6], [3,2]), null, "can construct 49 7,7,6 3,2 FFA");
-  var ffa = new FFA(49, [7,7,6], [3,2]);
+  var opts = { sizes: [7, 7, 6], advancers: [3,2] };
+  t.equal(FFA.invalid(49, opts), null, "can construct 49 7,7,6 3,2 FFA");
+  var ffa = new FFA(49, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2})
@@ -148,8 +156,9 @@ test("ffa 49 7 3", function (t) {
 
 // advance almost all the players!
 test("ffa 16 4 3", function (t) {
-  t.equal(FFA.invalid(16, [4,4,3,3,4], [3,3,2,2]), null, "can FFA 16 4 3");
-  var ffa = new FFA(16, [4,4,3,3,4], [3,3,2,2]);
+  var opts = { sizes: [4,4,3,3,4], advancers: [3,3,2,2] };
+  t.equal(FFA.invalid(16, opts), null, "can FFA 16 4 3");
+  var ffa = new FFA(16, opts);
 
   var r1 = ffa.findMatches({r: 1})
     , r2 = ffa.findMatches({r: 2})

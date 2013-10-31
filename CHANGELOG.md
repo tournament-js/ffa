@@ -1,3 +1,7 @@
+0.4.0 / 2013-11-XX
+==================
+  * `sizes` and `advancers` now passed in as optional arguments
+
 0.3.0 / 2013-10-25
 ==================
   * Using tournament@0.17.0 for better stats interface
