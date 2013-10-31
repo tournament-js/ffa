@@ -249,6 +249,7 @@ FFA.prototype.stats = function (res) {
 
   var limit = this.limit;
   var maxround = this.sizes.length;
+
   // gradually improve scores for each player by looking at later and later rounds
   this.rounds().forEach(function (rnd, k) {
     var rndPs = $.flatten($.pluck('p', rnd)).filter($.neq(Base.NONE));
@@ -256,39 +257,19 @@ FFA.prototype.stats = function (res) {
       res[p-1].pos = rndPs.length; // tie any players that got here
     });
 
-    var adv = advs[k] || 0; // zero advs in the last round deliberate
+    var isLimitedFinal = (limit > 0 && k === maxround - 1);
+    var adv = isLimitedFinal ? limit / rnd.length : advs[k] || 0;
+
     rnd.filter($.get('m')).forEach(function (m) {
       // position the matches that have been played
-      if (limit > 0 && k === maxround - 1) {
-        adv = limit / rnd.length;
-        // losers fall through and are scored as any other done round with 'adv' set
-        // but we must positions winners as well (top adv each match) in this rnd
-        // as nothing else does this in this special case
-        Base.sorted(m).slice(0, adv).forEach(function (w, i) {
-          var resEl = res[w - 1];
-          // no adv set for this round so must also increment wins for these
-          // TODO: correct? we have adv above.. wins probably get too many pluses
-          resEl.wins += 1;
-          // their final position shall be tied between groups, and desc within
-          resEl.pos = i*rnd.length + 1;
-        });
-      }
-      // if round is done, position the ones not advancing from that round
-      // collect and sort between round the ones after top adv
-      // NB: in `limit`-less final, adv is zero, so everyone's treated as a loser
-
-      // start at: numPlayers - (numPlayers - adv*numGroups) + 1
-      var start = rndPs.length - (rndPs.length - adv*rnd.length) + 1;
-
-      // loop through losers
-      Base.sorted(m).slice(adv).forEach(function (l, i) {
-        var resEl = res[l - 1];
-        if (i === 0 && adv === 0) {
-          // set wins +1 on actual winner in `limit`-less final
+      Base.sorted(m).forEach(function (p, i) {
+        var resEl = res[p - 1];
+        if ((isLimitedFinal && i < adv) || (i >= adv && i === 0)) {
+          // winners of limited final || sole winner of limitless final
           resEl.wins += 1;
         }
-        // tie x-placing losers between groups (at least pos-wise)
-        resEl.pos = start + i*rnd.length; // TODO: needs better breaking?
+        // positions tied between groups, and desc within
+        resEl.pos = i*rnd.length + 1;
       });
     });
   });
