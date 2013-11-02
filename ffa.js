@@ -235,14 +235,15 @@ FFA.prototype.stats = function (res) {
     var adv = advs[m.id.r - 1] || 0;
     //var topScore = top[0][1];
     for (var j = 0; j < top.length; j += 1) {
-      var p = top[j][0] - 1
-        , sc = top[j][1]; // scores
-      res[p].for += sc;
-      //res[p].against += (topScore - sc); // difference with winner
+      var p = Base.resultEntry(res, top[j][0]);
+      var sc = top[j][1]; // scores
+
+      p.for += sc;
+      //p.against += (topScore - sc); // difference with winner
 
       // NB: final round win counted by .positionTies as can have multiple winners
       if (j < adv) {
-        res[p].wins += 1;
+        p.wins += 1;
       }
     }
   });
@@ -254,7 +255,7 @@ FFA.prototype.stats = function (res) {
   this.rounds().forEach(function (rnd, k) {
     var rndPs = $.flatten($.pluck('p', rnd)).filter($.neq(Base.NONE));
     rndPs.forEach(function (p) {
-      res[p-1].pos = rndPs.length; // tie any players that got here
+      Base.resultEntry(res, p).pos = rndPs.length; // tie any players that got here
     });
 
     var isLimitedFinal = (limit > 0 && k === maxround - 1);
@@ -263,7 +264,7 @@ FFA.prototype.stats = function (res) {
     rnd.filter($.get('m')).forEach(function (m) {
       // position the matches that have been played
       Base.sorted(m).forEach(function (p, i) {
-        var resEl = res[p - 1];
+        var resEl = Base.resultEntry(res, p);
         if ((isLimitedFinal && i < adv) || (i >= adv && i === 0)) {
           // winners of limited final || sole winner of limitless final
           resEl.wins += 1;
