@@ -186,7 +186,7 @@ FFA.idString = function (id) {
 // Expected methods
 //------------------------------------------------------------------
 
-FFA.prototype.progress = function (match) {
+FFA.prototype._progress = function (match) {
   var adv = this.advs[match.id.r - 1] || 0;
   var currRnd = this.findMatches({r: match.id.r});
   if (currRnd.every($.get('m')) && adv > 0) {
@@ -194,8 +194,7 @@ FFA.prototype.progress = function (match) {
   }
 };
 
-FFA.prototype.verify = function (match, score) {
-  console.log('got match for verify:', match, score);
+FFA.prototype._verify = function (match, score) {
   var adv = this.advs[match.id.r - 1] || 0;
   if (adv > 0 && score[adv] === score[adv - 1]) {
     return "scores must unambiguous decide who advances";
@@ -212,7 +211,7 @@ FFA.prototype.verify = function (match, score) {
   return null;
 };
 
-FFA.prototype.limbo = function (playerId) {
+FFA.prototype._limbo = function (playerId) {
   // if player reached currentRound, he may be waiting for generation of nextRound
   var m = $.firstBy(function (m) {
     return m.p.indexOf(playerId) >= 0 && m.m;
@@ -228,27 +227,24 @@ FFA.prototype.limbo = function (playerId) {
 };
 
 // TODO: best scores
-FFA.prototype.stats = function (res) {
-  var advs = this.advs;
-  this.matches.filter($.get('m')).forEach(function (m) {
-    var top = $.zip(m.p, m.m).sort(Base.compareZip);
-    var adv = advs[m.id.r - 1] || 0;
-    //var topScore = top[0][1];
-    for (var j = 0; j < top.length; j += 1) {
-      var p = Base.resultEntry(res, top[j][0]);
-      var sc = top[j][1]; // scores
-
-      p.for += sc;
-      //p.against += (topScore - sc); // difference with winner
-
-      // NB: final round win counted by .positionTies as can have multiple winners
+FFA.prototype._stats = function (res, m) {
+  if (m.m) {
+    var adv = this.advs[m.id.r - 1] || 0;
+    $.zip(m.p, m.m).sort(Base.compareZip).forEach(function (t, j/*, top*/) {
+      var p = Base.resultEntry(res, t[0]);
+      p.for += t[1];
+      //p.against += (top[0][1] - sc); // difference with winner
       if (j < adv) {
         p.wins += 1;
       }
-    }
-  });
+    });
+  }
+  return res;
+};
 
+FFA.prototype._sort = function (res) {
   var limit = this.limit;
+  var advs = this.advs;
   var maxround = this.sizes.length;
 
   // gradually improve scores for each player by looking at later and later rounds
@@ -278,6 +274,5 @@ FFA.prototype.stats = function (res) {
   // still sort also by maps for in case people want to use that
   return res.sort($.comparing('pos', +1, 'for', -1));
 };
-
 
 module.exports = FFA;
