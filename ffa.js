@@ -100,11 +100,8 @@ var finalInvalid = function (leftOver, limit, gLast) {
     }
     // need limit to be a multiple of numGroups (otherwise tiebreaks necessary)
     if (limit % lastNg !== 0) {
-      return "number of groups must divide limit";
+      return "number of matches in final round must divide limit";
     }
-  }
-  else if (lastNg !== 1) {
-    return "must contain a single match when not using limits";
   }
   return null;
 };
