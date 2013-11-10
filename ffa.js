@@ -239,6 +239,33 @@ FFA.prototype._stats = function (res, m) {
   return res;
 };
 
+// NB: same as the masters one except we set gpos rather than pos
+var positionTies = function (res, sortedPairSlice, startIdx) {
+  // when we only score a subset start positioning at the beginning of slice
+  var pos = startIdx
+    , ties = 0
+    , scr = -Infinity;
+
+  // loop over players in order of their score
+  for (var k = 0; k < sortedPairSlice.length; k += 1) {
+    var pair = sortedPairSlice[k]
+      , p = pair[0]
+      , s = pair[1];
+
+    // if this is a tie, pos is previous one, and next real pos must be incremented
+    if (scr === s) {
+      ties += 1;
+    }
+    else {
+      pos += 1 + ties; // if we tied, must also + that
+      ties = 0;
+    }
+    scr = s;
+    var resEl = Base.resultEntry(res, p);
+    resEl.fmpos = pos;
+  }
+};
+
 FFA.prototype._sort = function (res) {
   var limit = this.limit;
   var advs = this.advs;
@@ -246,27 +273,47 @@ FFA.prototype._sort = function (res) {
 
   // gradually improve scores for each player by looking at later and later rounds
   this.rounds().forEach(function (rnd, k) {
-    var rndPs = $.flatten($.pluck('p', rnd)).filter($.neq(Base.NONE));
+    var rndPs = $.flatten($.pluck('p', rnd)).filter($.gt(Base.NONE));
     rndPs.forEach(function (p) {
       Base.resultEntry(res, p).pos = rndPs.length; // tie any players that got here
     });
 
+    var isFinal = (k === maxround - 1);
     var isLimitedFinal = (limit > 0 && k === maxround - 1);
     var adv = isLimitedFinal ? limit / rnd.length : advs[k] || 0;
 
     rnd.filter($.get('m')).forEach(function (m) {
-      // position the matches that have been played
+      // tie position final round match positions for xarys later
+      if (isFinal) {
+        positionTies(res, $.zip(m.p, m.m).sort(Base.compareZip), 0);
+      }
+
+      // wins computation - very primitive atm (no ties accounted for)
       Base.sorted(m).forEach(function (p, i) {
         var resEl = Base.resultEntry(res, p);
         if ((isLimitedFinal && i < adv) || (i >= adv && i === 0)) {
           // winners of limited final || sole winner of limitless final
-          resEl.wins += 1;
+          resEl.wins += 1; // TODO: this is shitty
         }
-        // positions tied between groups, and desc within
-        resEl.pos = i*rnd.length + 1;
+        if (!isFinal) {
+          // every other positioning is done by equating all non-progressers
+          // to this round as equally bad - may improve this in future
+          resEl.pos = adv*rnd.length + 1;
+        }
       });
     });
   });
+
+  if (this.isDone()) {
+    var finals = this.findMatches({ r: maxround });
+    finals.forEach(function (m) {
+      m.p.forEach(function (p) {
+        var resEl = Base.resultEntry(res, p);
+        // always tie between matches
+        resEl.pos = (resEl.fmpos-1)*finals.length + 1;
+      })
+    })
+  }
 
   // still sort also by maps for in case people want to use that
   return res.sort($.comparing('pos', +1, 'for', -1));
