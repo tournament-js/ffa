@@ -281,14 +281,15 @@ FFA.prototype._sort = function (res) {
 
     var isFinal = (k === maxround - 1);
     var isLimitedFinal = (limit > 0 && k === maxround - 1);
-    var adv = isLimitedFinal ? limit / rnd.length : advs[k] || 0;
+    var adv = advs[k] || 0;
+    var wlim = isLimitedFinal ? limit / rnd.length : adv;
     var nonAdvancers = $.replicate(sizes[k] - adv, []); // all in final
 
     // collect non-advancers - and set wins
     rnd.filter($.get('m')).forEach(function (m) {
       positionTies(m, isFinal ? 0 : adv, function (p, pos) {
         var resEl = Base.resultEntry(res, p);
-        if (pos <= adv || (pos === 1 && !adv)) {
+        if (pos <= wlim || (pos === 1 && !adv)) {
           resEl.wins += 1;
         }
         nonAdvancers[pos-adv-1].push(resEl);
