@@ -65,23 +65,21 @@ test("ffa 16 4 2 unfinished no limits", function (t) {
   res.forEach(function (r) {
     if (r.seed <= 2) {
       t.equal(r.pos, 1, 'top 2 tied at 1');
-      t.equal(r.fmpos, 1, 'both won their group');
     }
     else if (r.seed <= 4) {
       t.equal(r.pos, 3, '3-4 tied at 3');
-      t.equal(r.fmpos, 2, 'both 2nded their group');
     }
     else if (r.seed <= 6) {
       t.equal(r.pos, 5, '5-6 tied at 5');
-      t.equal(r.fmpos, 3, 'both 3rded their group');
     }
     else if (r.seed <= 8) {
       t.equal(r.pos, 7, '6-7 tied at 7');
-      t.equal(r.fmpos, 4, 'both 4thed their group');
+    }
+    else if (r.seed <= 12) {
+      t.equal(r.pos, 9, '9-12 tied at 9');
     }
     else {
-      t.equal(r.pos, 9, 'treat all losers equally for now');
-      t.equal(r.fmpos, undefined, 'otherwise not reached final round');
+      t.equal(r.pos, 13, '13-16 tied at 13');
     }
   })
 
@@ -117,12 +115,12 @@ test("ffa 16 4 2 unfinished res limits", function (t) {
       t.ok(o.seed > 8, "bottom 8 seeds are here");
       t.ok(o.pos > 8, "they have no chance of getting 8th anymore");
       // these tests are more specific than we position at the moment
-      //if ([9, 10, 11, 12].indexOf(o.seed) >= 0) {
-      //  t.equal(o.pos, 9, "9-12 all got got equal score 3rds and thus tie at 9th");
-      //}
-      //if ([13, 14, 15, 16].indexOf(o.seed) >= 0) {
-      //  t.equal(o.pos, 13, "13-16 all got equal score 4ths and thus tie at 13th");
-      //}
+      if ([9, 10, 11, 12].indexOf(o.seed) >= 0) {
+        t.equal(o.pos, 9, "9-12 all got got equal score 3rds and thus tie at 9th");
+      }
+      if ([13, 14, 15, 16].indexOf(o.seed) >= 0) {
+        t.equal(o.pos, 13, "13-16 all got equal score 4ths and thus tie at 13th");
+      }
     });
   };
   verifyLosers(res1); // bottom 8 should be ready now
