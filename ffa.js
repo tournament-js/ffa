@@ -239,16 +239,17 @@ FFA.prototype._stats = function (res, m) {
   return res;
 };
 
-// NB: same as the masters one except we set gpos rather than pos
-var positionTies = function (res, sortedPairSlice, startIdx) {
-  // when we only score a subset start positioning at the beginning of slice
-  var pos = startIdx
+// NB: generalized version of the one found in Masters
+var positionTies = function (match, startIdx, cb) {
+  var top = $.zip(match.p, match.m).sort(Base.compareZip)
+    , slice = top.slice(startIdx)
+    , pos = startIdx
     , ties = 0
     , scr = -Infinity;
 
   // loop over players in order of their score
-  for (var k = 0; k < sortedPairSlice.length; k += 1) {
-    var pair = sortedPairSlice[k]
+  for (var k = 0; k < slice.length; k += 1) {
+    var pair = slice[k]
       , p = pair[0]
       , s = pair[1];
 
@@ -261,14 +262,14 @@ var positionTies = function (res, sortedPairSlice, startIdx) {
       ties = 0;
     }
     scr = s;
-    var resEl = Base.resultEntry(res, p);
-    resEl.fmpos = pos;
+    cb(p, pos);
   }
 };
 
 FFA.prototype._sort = function (res) {
   var limit = this.limit;
   var advs = this.advs;
+  var sizes = this.sizes;
   var maxround = this.sizes.length;
 
   // gradually improve scores for each player by looking at later and later rounds
@@ -281,42 +282,52 @@ FFA.prototype._sort = function (res) {
     var isFinal = (k === maxround - 1);
     var isLimitedFinal = (limit > 0 && k === maxround - 1);
     var adv = isLimitedFinal ? limit / rnd.length : advs[k] || 0;
+    var nonAdvancers = $.replicate(sizes[k] - adv, []); // all in final
 
+    // collect non-advancers - and set wins
     rnd.filter($.get('m')).forEach(function (m) {
-      // tie position final round match positions for xarys later
-      if (isFinal) {
-        positionTies(res, $.zip(m.p, m.m).sort(Base.compareZip), 0);
-      }
-
-      // wins computation - very primitive atm (no ties accounted for)
-      Base.sorted(m).forEach(function (p, i) {
+      positionTies(m, isFinal ? 0 : adv, function (p, pos) {
         var resEl = Base.resultEntry(res, p);
-        if ((isLimitedFinal && i < adv) || (i >= adv && i === 0)) {
-          // winners of limited final || sole winner of limitless final
-          resEl.wins += 1; // TODO: this is shitty
+        if (pos <= adv || (pos === 1 && !adv)) {
+          resEl.wins += 1;
         }
-        if (!isFinal) {
-          // every other positioning is done by equating all non-progressers
-          // to this round as equally bad - may improve this in future
-          resEl.pos = adv*rnd.length + 1;
-        }
+        nonAdvancers[pos-adv-1].push(resEl);
       });
     });
-  });
 
-  if (this.isDone()) {
-    var finals = this.findMatches({ r: maxround });
-    finals.forEach(function (m) {
-      m.p.forEach(function (p) {
-        var resEl = Base.resultEntry(res, p);
-        // always tie between matches
-        resEl.pos = (resEl.fmpos-1)*finals.length + 1;
-      })
-    })
-  }
+    // nonAdvancers will be tied between the round based on their mpos
+    var posctr = adv*rnd.length + 1;
+    nonAdvancers.forEach(function (xplacers) {
+      xplacers.forEach(function (r) {
+        r.pos = posctr;
+      });
+      posctr += xplacers.length;
+    });
+  });
 
   // still sort also by maps for in case people want to use that
   return res.sort($.comparing('pos', +1, 'for', -1));
 };
+
+// helper method to be compatible with TieBreaker
+FFA.prototype.rawPositions = function (res) {
+  if (!this.isDone()) {
+    throw new Error("cannot tiebreak a FFA tournament until it is finished");
+  }
+
+  var maxround = this.sizes.length;
+  var finalRound = this.findMatches({ r: maxround });
+  var posAry = finalRound.map(function (m) {
+    var seedAry = $.replicate(m.p.length, []);
+    m.p.forEach(function (p) {
+      var resEl = Base.resultEntry(res, p);
+      $.insert(seedAry[resEl.fmpos], p);
+    });
+    return seedAry;
+  });
+  return posAry;
+
+};
+
 
 module.exports = FFA;
