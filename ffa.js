@@ -223,14 +223,15 @@ FFA.prototype._limbo = function (playerId) {
   }
 };
 
+FFA.prototype._initResult = $.constant({ against: 0 });
 // TODO: best scores
 FFA.prototype._stats = function (res, m) {
   if (m.m) {
     var adv = this.advs[m.id.r - 1] || 0;
-    $.zip(m.p, m.m).sort(Base.compareZip).forEach(function (t, j/*, top*/) {
+    $.zip(m.p, m.m).sort(Base.compareZip).forEach(function (t, j, top) {
       var p = Base.resultEntry(res, t[0]);
       p.for += t[1];
-      //p.against += (top[0][1] - sc); // difference with winner
+      p.against += (top[0][1] - t[1]); // difference with winner
       if (j < adv) {
         p.wins += 1;
       }
@@ -264,6 +265,12 @@ var positionTies = function (match, startIdx, cb) {
     scr = s;
     cb(p, pos);
   }
+};
+
+var compareMulti = function (x, y) {
+  return (x.pos - y.pos) ||
+         ((y.for - y.against) - (x.for - x.against)) ||
+         (x.seed - y.seed);
 };
 
 FFA.prototype._sort = function (res) {
@@ -306,8 +313,8 @@ FFA.prototype._sort = function (res) {
     });
   });
 
-  // still sort also by maps for in case people want to use that
-  return res.sort($.comparing('pos', +1, 'for', -1));
+  // TODO: do scoreDiff rather than for for visual sorting
+  return res.sort(compareMulti);
 };
 
 // helper method to be compatible with TieBreaker
