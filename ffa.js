@@ -70,11 +70,11 @@ var roundInvalid = function (np, grs, adv, numGroups) {
   if (np < 2) {
     return "needs at least 2 players";
   }
-  if (grs < 3 || (numGroups === 1 && grs >= 2)) {
+  if (grs < 3 || (numGroups === 1 && grs < 2)) {
     return "groups size must be at least 3 in regular rounds - 2 in final";
   }
-  if (grs >= np) {
-    return "group size must be less than the number of players left";
+  if (grs > np) {
+    return "group size cannot be greater than the number of players left";
   }
   if (adv >= grs) {
     return "must advance less than the group size";
