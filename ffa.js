@@ -258,9 +258,8 @@ FFA.prototype._sort = function (res) {
     });
 
     var isFinal = (k === maxround - 1);
-    var isLimitedFinal = (limit > 0 && k === maxround - 1);
     var adv = advs[k] || 0;
-    var wlim = isLimitedFinal ? limit / rnd.length : adv;
+    var wlim = (limit > 0 && isFinal) ? limit / rnd.length : adv;
     var nonAdvancers = $.replicate(sizes[k] - adv, []); // all in final
 
     // collect non-advancers - and set wins
@@ -289,7 +288,6 @@ FFA.prototype._sort = function (res) {
     });
   });
 
-  // TODO: do scoreDiff rather than for for visual sorting
   return res.sort(compareMulti);
 };
 
@@ -309,7 +307,6 @@ FFA.prototype.rawPositions = function (res) {
     return seedAry;
   });
   return posAry;
-
 };
 
 

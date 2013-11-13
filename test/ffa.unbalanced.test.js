@@ -66,7 +66,7 @@ test("15 [4, 4], [2] (unbalanced unfinished)", function (t) {
       "1 P5 W=2 F=8 A=0",
       "1 P2 W=2 F=7 A=0",
       "1 P6 W=2 F=7 A=0",
-      // 2nd placers (perhaps unfairly all get 5th)
+      // 2nd placers (who slightly unfairly all get 5th)
       "5 P3 W=1 F=6 A=1",
       "5 P4 W=1 F=6 A=1",
       "5 P7 W=1 F=6 A=1",

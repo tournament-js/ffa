@@ -1,3 +1,12 @@
+0.5.0 / 2013-11-13
+==================
+  * Limitless tournament no longer needs a single final
+  * TieBreaker supported
+  * Can use FFA as a different type of preliminary GroupStage with this
+  * `results[i].wins` now accounts for ties properly (bug)
+  * `results[i].against` exists and counts sum(difference with winner)
+  * `results[i].gpos` exists on final rounders for TieBreaker analysis
+
 0.4.3 / 2013-11-06
 ==================
   * Interface with tournament@0.20.0 for cleaner results implementation
