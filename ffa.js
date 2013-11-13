@@ -223,8 +223,6 @@ FFA.prototype._limbo = function (playerId) {
   }
 };
 
-FFA.prototype._initResult = $.constant({ against: 0 });
-// TODO: best scores
 FFA.prototype._stats = function (res, m) {
   if (m.m) {
     var adv = this.advs[m.id.r - 1] || 0;
@@ -238,33 +236,6 @@ FFA.prototype._stats = function (res, m) {
     });
   }
   return res;
-};
-
-// NB: generalized version of the one found in Masters
-var positionTies = function (match, startIdx, cb) {
-  var top = $.zip(match.p, match.m).sort(Base.compareZip)
-    , slice = top.slice(startIdx)
-    , pos = startIdx
-    , ties = 0
-    , scr = -Infinity;
-
-  // loop over players in order of their score
-  for (var k = 0; k < slice.length; k += 1) {
-    var pair = slice[k]
-      , p = pair[0]
-      , s = pair[1];
-
-    // if this is a tie, pos is previous one, and next real pos must be incremented
-    if (scr === s) {
-      ties += 1;
-    }
-    else {
-      pos += 1 + ties; // if we tied, must also + that
-      ties = 0;
-    }
-    scr = s;
-    cb(p, pos);
-  }
 };
 
 var compareMulti = function (x, y) {
@@ -294,7 +265,9 @@ FFA.prototype._sort = function (res) {
 
     // collect non-advancers - and set wins
     rnd.filter($.get('m')).forEach(function (m) {
-      positionTies(m, isFinal ? 0 : adv, function (p, pos) {
+      var startIdx = isFinal ? 0 : adv;
+      var top = $.zip(m.p, m.m).sort(Base.compareZip).slice(startIdx);
+      Base.matchTieCompute(top, startIdx, function (p, pos) {
         var resEl = Base.resultEntry(res, p);
         if (pos <= wlim || (pos === 1 && !adv)) {
           resEl.wins += 1;
