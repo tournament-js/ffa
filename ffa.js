@@ -300,7 +300,7 @@ FFA.prototype._sort = function (res) {
           resEl.wins += 1;
         }
         if (isFinal) {
-          resEl.fmpos = pos; // for rawPositions
+          resEl.gpos = pos; // for rawPositions
         }
         nonAdvancers[pos-adv-1].push(resEl);
       });
@@ -331,7 +331,7 @@ FFA.prototype.rawPositions = function (res) {
     var seedAry = $.replicate(m.p.length, []);
     m.p.forEach(function (p) {
       var resEl = Base.resultEntry(res, p);
-      $.insert(seedAry[resEl.fmpos-1], p);
+      $.insert(seedAry[resEl.gpos-1], p);
     });
     return seedAry;
   });
