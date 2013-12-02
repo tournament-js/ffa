@@ -1,8 +1,7 @@
 # FFA elimination tournaments
 [![Build Status](https://secure.travis-ci.org/clux/ffa.png)](http://travis-ci.org/clux/ffa)
 [![Dependency Status](https://david-dm.org/clux/ffa.png)](https://david-dm.org/clux/ffa)
-
-    Stability: 2 - Unstable
+[![unstable](http://hughsk.github.io/stability-badges/dist/unstable.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
 
 ## Overview
 FFA is a very general tournament building block that you can take in many directions (only a few of which are commonly explored).
@@ -10,23 +9,48 @@ The result always consists of FFA matches; matches that expect multiple players/
 
 ## Construction
 You must specify precisely the required group size for each round and how many to advance.
-This is really the hardest part of an FFA elimination. There are essentially endless possibilities, and we will allow very exotic and adventurous ones as long as they are at least playable and non-trivial. See the [Ensuring Constructibility](https://github.com/clux/tournament/blob/master/doc/base.md#ensuring-constructibility) section for how to check your parameters.
+This is really the hardest part of an FFA elimination. There are essentially endless possibilities, and we will allow very exotic and adventurous ones as long as they are playable, non-trivial, and leave the next round sensible.
 
 ```js
 // 8 players in 1 match of 8
 var ffa = new FFA(8);
+ffa.matches;
+[ { id: { s: 1, r: 1, m: 1 }, p: [ 1, 2, 3, 4, 5, 6, 7, 8 ] } ]
+
 
 // 16 players in matches of 4 each round, top 2 advances between each
 var ffa = new FFA(16, { sizes: [4, 4, 4], advancers: [2, 2] });
+ffa.matches;
+[ { id: { s: 1, r: 1, m: 1 }, p: [ 1, 5, 12, 16 ] },
+  { id: { s: 1, r: 1, m: 2 }, p: [ 2, 6, 11, 15 ] },
+  { id: { s: 1, r: 1, m: 3 }, p: [ 3, 7, 10, 14 ] },
+  { id: { s: 1, r: 1, m: 4 }, p: [ 4, 8, 9, 13 ] },
+  { id: { s: 1, r: 2, m: 1 }, p: [ 0, 0, 0, 0 ] }, // semi 1
+  { id: { s: 1, r: 2, m: 2 }, p: [ 0, 0, 0, 0 ] }, // semi 2
+  { id: { s: 1, r: 3, m: 1 }, p: [ 0, 0, 0, 0 ] } ] // final
+
 
 // 15 players in groups of 5, limited so that the top 2 from each match can be picked
 var ffa = new FFA(15, { sizes: [5], limit: 6 });
+ffa.matches;
+[ { id: { s: 1, r: 1, m: 1 }, p: [ 1, 4, 7, 12, 15 ] },
+  { id: { s: 1, r: 1, m: 2 }, p: [ 2, 5, 8, 11, 14 ] },
+  { id: { s: 1, r: 1, m: 3 }, p: [ 3, 6, 9, 10, 13 ] } ]
+
 
 // 32 player groupstage replacement - 4 matches of size 8
 var ffa = new FFA(32, { sizes: [8] }); // may have to tiebreak without limits
+[ { id: { s: 1, r: 1, m: 1 }, p: [ 1, 5, 9,  13, 20, 24, 28, 32 ] },
+  { id: { s: 1, r: 1, m: 2 }, p: [ 2, 6, 10, 14, 19, 23, 27, 31 ] },
+  { id: { s: 1, r: 1, m: 3 }, p: [ 3, 7, 11, 15, 18, 22, 26, 30 ] },
+  { id: { s: 1, r: 1, m: 4 }, p: [ 4, 8, 12, 16, 17, 21, 25, 29 ] } ]
+
 
 // knockout style tournament - one match per round - knock out 2 each round
 var ffa = new FFA(8, { sizes: [8, 6, 4], advancers: [6, 4] })
+[ { id: { s: 1, r: 1, m: 1 }, p: [ 1, 2, 3, 4, 5, 6, 7, 8 ] },
+  { id: { s: 1, r: 2, m: 1 }, p: [ 0, 0, 0, 0, 0, 0 ] },
+  { id: { s: 1, r: 3, m: 1 }, p: [ 0, 0, 0, 0 ] } ]
 ```
 
 Note that the last example is so common it has been created as a subclass in [masters](https://npmjs.org/package/masters). Subclassing is easy, and if you find yourself reusing certain patters, you should create one after reading the [tournament implementors guide](https://github.com/clux/tournament/blob/master/doc/implementors.md).
