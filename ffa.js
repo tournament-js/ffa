@@ -1,6 +1,6 @@
 var $ = require('interlude')
   , group = require('group')
-  , Base = require('tournament');
+  , Tournament = require('tournament');
 
 //------------------------------------------------------------------
 // Initialization helpers
@@ -8,7 +8,7 @@ var $ = require('interlude')
 
 var unspecify = function (grps) {
   return grps.map(function (grp) {
-    return $.replicate(grp.length, Base.NONE);
+    return $.replicate(grp.length, Tournament.NONE);
   });
 };
 
@@ -42,12 +42,12 @@ var makeMatches = function (np, grs, adv) {
 
 var prepRound = function (currRnd, nxtRnd, adv) {
   var top = currRnd.map(function (m) {
-    return $.zip(m.p, m.m).sort(Base.compareZip).slice(0, adv);
+    return $.zip(m.p, m.m).sort(Tournament.compareZip).slice(0, adv);
   });
 
   // now flatten and sort across matches
   // this essentially re-seeds players for the next round
-  top = $.pluck(0, $.flatten(top).sort(Base.compareZip));
+  top = $.pluck(0, $.flatten(top).sort(Tournament.compareZip));
 
   // re-find group size from maximum length of zeroed player array in next round
   var grs = $.maximum($.pluck('length', $.pluck('p', nxtRnd)));
@@ -110,10 +110,10 @@ var invalid = function (np, grs, adv, limit) {
   if (np < 2) {
     return "number of players must be at least 2";
   }
-  if (!grs.length || !grs.every(Base.isInteger)) {
+  if (!grs.length || !grs.every(Tournament.isInteger)) {
     return "sizes must be a non-empty array of integers";
   }
-  if (!adv.every(Base.isInteger) || grs.length !== adv.length + 1) {
+  if (!adv.every(Tournament.isInteger) || grs.length !== adv.length + 1) {
     return "advancers must be a sizes.length-1 length array of integers";
   }
 
@@ -148,7 +148,7 @@ var invalid = function (np, grs, adv, limit) {
 // Interface
 //------------------------------------------------------------------
 
-var FFA = Base.sub('FFA', function (opts, initParent) {
+var FFA = Tournament.sub('FFA', function (opts, initParent) {
   this.limit = opts.limit;
   this.advs = opts.advancers;
   this.sizes = opts.sizes;
@@ -217,7 +217,7 @@ FFA.prototype._limbo = function (playerId) {
   if (m) {
     // will he advance to nextRound ?
     var adv = this.advs[m.id.r - 1];
-    if (Base.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
+    if (Tournament.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
       return {s: 1, r: m.id.r + 1};
     }
   }
@@ -226,8 +226,8 @@ FFA.prototype._limbo = function (playerId) {
 FFA.prototype._stats = function (res, m) {
   if (m.m) {
     var adv = this.advs[m.id.r - 1] || 0;
-    $.zip(m.p, m.m).sort(Base.compareZip).forEach(function (t, j, top) {
-      var p = Base.resultEntry(res, t[0]);
+    $.zip(m.p, m.m).sort(Tournament.compareZip).forEach(function (t, j, top) {
+      var p = Tournament.resultEntry(res, t[0]);
       p.for += t[1];
       p.against += (top[0][1] - t[1]); // difference with winner
       if (j < adv) {
@@ -252,9 +252,9 @@ FFA.prototype._sort = function (res) {
 
   // gradually improve scores for each player by looking at later and later rounds
   this.rounds().forEach(function (rnd, k) {
-    var rndPs = $.flatten($.pluck('p', rnd)).filter($.gt(Base.NONE));
+    var rndPs = $.flatten($.pluck('p', rnd)).filter($.gt(Tournament.NONE));
     rndPs.forEach(function (p) {
-      Base.resultEntry(res, p).pos = rndPs.length; // tie any players that got here
+      Tournament.resultEntry(res, p).pos = rndPs.length; // tie players that got here
     });
 
     var isFinal = (k === maxround - 1);
@@ -265,9 +265,9 @@ FFA.prototype._sort = function (res) {
     // collect non-advancers - and set wins
     rnd.filter($.get('m')).forEach(function (m) {
       var startIdx = isFinal ? 0 : adv;
-      var top = $.zip(m.p, m.m).sort(Base.compareZip).slice(startIdx);
-      Base.matchTieCompute(top, startIdx, function (p, pos) {
-        var resEl = Base.resultEntry(res, p);
+      var top = $.zip(m.p, m.m).sort(Tournament.compareZip).slice(startIdx);
+      Tournament.matchTieCompute(top, startIdx, function (p, pos) {
+        var resEl = Tournament.resultEntry(res, p);
         if (pos <= wlim || (pos === 1 && !adv)) {
           resEl.wins += 1;
         }
@@ -301,7 +301,7 @@ FFA.prototype.rawPositions = function (res) {
   var posAry = finalRound.map(function (m) {
     var seedAry = $.replicate(m.p.length, []);
     m.p.forEach(function (p) {
-      var resEl = Base.resultEntry(res, p);
+      var resEl = Tournament.resultEntry(res, p);
       $.insert(seedAry[(resEl.gpos || resEl.pos)-1], p);
     });
     return seedAry;
