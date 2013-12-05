@@ -92,6 +92,8 @@ Individual ties are only allowed as long as we can discriminate between the last
 
 Note that this is artificial, and if you have no way of enforcing this, you will have to manually adjust the match score to account for ties. `FFA` will not allow you to enter ambiguous scores at the limit point.
 
+Note that if you would like automatic tiebreakers created when ties occur, rather than enforcing the limit with code, try the [ffa-tb](https://github.com/clux/ffa-tb) module instead.
+
 ## Checking results
 Results are updated after every match, and player positions are always the worst projection based on how far they have gotten.
 
