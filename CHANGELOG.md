@@ -1,3 +1,7 @@
+0.6.0 / 2013-12-23
+==================
+  * Updated `tournament` to 0.21.0 so that `FFA` is an `EventEmitter`
+
 0.5.0 / 2013-11-13
 ==================
   * Limitless tournament no longer needs a single final
