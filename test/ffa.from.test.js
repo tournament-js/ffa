@@ -1,9 +1,7 @@
-var tap = require('tap')
-  , test = tap.test
-  , $ = require('interlude')
-  , FFA = require('../');
+var $ = require('interlude')
+ , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
-test("FFA -> FFA -> FFA", function (t) {
+exports.FFAtoFFA = function (t) {
   var f1 = new FFA(16);
   var m1 = f1.matches[0];
   f1.score(m1.id, $.range(16));
@@ -32,5 +30,5 @@ test("FFA -> FFA -> FFA", function (t) {
   var f3 = FFA.from(f2, 4);
   t.deepEqual(f3.players(), [13,14,15,16], "top 4 progressed to f3");
 
-  t.end();
-});
+  t.done();
+};

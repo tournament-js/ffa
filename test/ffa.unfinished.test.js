@@ -1,5 +1,5 @@
 var $ = require('interlude')
-, FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
 exports.unfinishedFiveFiveLimited = function (t) {
   var opts = { sizes: [5], limit: 4 };
