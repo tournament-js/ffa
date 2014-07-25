@@ -15,7 +15,7 @@
   ],
   "main": "ffa.js",
   "scripts": {
-    "test": "nodeunit test/*.js",
+    "test": "nodeunit test/*.js --reporter=verbose",
     "coverage": "jscoverage ffa.js && FFA_COV=1 nodeunit --reporter=lcov test",
     "coveralls": "npm run coverage | coveralls"
   },
