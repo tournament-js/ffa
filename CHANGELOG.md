@@ -1,3 +1,7 @@
+0.6.1 / 2014-07-25
+==================
+  * Documentation and coverage release
+
 0.6.0 / 2013-12-23
 ==================
   * Updated `tournament` to 0.21.0 so that `FFA` is an `EventEmitter`
