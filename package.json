@@ -14,7 +14,9 @@
   ],
   "main": "ffa.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "nodeunit test/*.js",
+    "coverage": "jscoverage ffa.js && FFA_COV=1 nodeunit --reporter=lcov test",
+    "coveralls": "npm run coverage | coveralls"
   },
   "dependencies": {
     "interlude": "~1.0.2",
@@ -22,7 +24,9 @@
     "tournament": "~0.21.0"
   },
   "devDependencies": {
-    "tap": "~0.4.4"
+    "coveralls": "^2.11.1",
+    "jscoverage": "^0.5.5",
+    "nodeunit": "^0.9.0"
   },
   "bugs": {
     "url": "http://github.com/clux/ffa/issues"

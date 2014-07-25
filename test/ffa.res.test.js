@@ -1,11 +1,9 @@
-var tap = require('tap')
-  , test = tap.test
-  , $ = require('interlude')
-  , FFA = require('../');
+var $ = require('interlude')
+  , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
 
 // full test of a 16 4 2 ffa tournament
-test("ffa 16 4 2", function (t) {
+exports.resultsStandardSixteenFour = function (t) {
   var opts = { sizes: [4, 4, 4], advancers: [2, 2] };
   var ffa = new FFA(16, opts)
     , gs = ffa.matches;
@@ -174,12 +172,12 @@ test("ffa 16 4 2", function (t) {
     t.ok(ffa.unscorable(m.id, [4,3,2,1]), "cant score anything after final is done");
   });
 
-  t.end();
-});
+  t.done();
+};
 
 
 // full test of a 81 3 1 ffa tournament
-test("ffa 81 3 1", function (t) {
+exports.resultsPowersOfThree = function (t) {
   var opts = { sizes: [3, 3, 3, 3], advancers: [1, 1, 1] };
   var ffa = new FFA(81, opts)
     , gs = ffa.matches;
@@ -380,5 +378,5 @@ test("ffa 81 3 1", function (t) {
     t.equal(up, undefined, "tournament over, no no upcoming match for p" + n);
   });
 
-  t.end();
-});
+  t.done();
+};

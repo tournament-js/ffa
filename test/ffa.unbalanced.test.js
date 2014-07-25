@@ -1,7 +1,5 @@
-var tap = require('tap')
-  , test = tap.test
-  , $ = require('interlude')
-  , FFA = require('../');
+var $ = require('interlude')
+  , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
 var makeStr = function(r) {
   var str = r.pos + " P" + r.seed + " W=" + r.wins;
@@ -9,7 +7,7 @@ var makeStr = function(r) {
   return str;
 };
 
-test("15 [4, 4], [2] (unbalanced unfinished)", function (t) {
+exports.unbalancedFifteen = function (t) {
   var ffa = new FFA(15, { sizes: [4, 4], advancers: [2] });
   var fm = ffa.matches;
 
@@ -81,5 +79,5 @@ test("15 [4, 4], [2] (unbalanced unfinished)", function (t) {
     ], 'posAry for ffa'
   );
 
-  t.end();
-});
+  t.done();
+};
