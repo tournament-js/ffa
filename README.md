@@ -1,7 +1,9 @@
 # FFA elimination tournaments
-[![Build Status](https://secure.travis-ci.org/clux/ffa.png)](http://travis-ci.org/clux/ffa)
-[![Dependency Status](https://david-dm.org/clux/ffa.png)](https://david-dm.org/clux/ffa)
-[![unstable](http://hughsk.github.io/stability-badges/dist/unstable.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
+[![npm status](http://img.shields.io/npm/v/ffa.svg)](https://www.npmjs.org/package/ffa)
+[![build status](https://secure.travis-ci.org/clux/ffa.svg)](http://travis-ci.org/clux/ffa)
+[![dependency status](https://david-dm.org/clux/ffa.svg)](https://david-dm.org/clux/ffa)
+[![coverage status](http://img.shields.io/coveralls/clux/ffa.svg)](https://coveralls.io/r/clux/ffa)
+[![unstable](http://img.shields.io/badge/stability-unstable-E5AE13.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
 
 ## Overview
 FFA is a very general tournament building block that you can take in many directions (only a few of which are commonly explored).
