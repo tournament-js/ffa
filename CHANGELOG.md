@@ -1,4 +1,4 @@
-0.7.0 / 2014-08-XX
+0.7.0 / 2014-08-17
 ==================
   * Relaxed rules for number of players in a match (always allow 2 player matches now)
   * `.invalid` returns better messages
