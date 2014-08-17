@@ -70,11 +70,8 @@ var roundInvalid = function (np, grs, adv, numGroups) {
   if (np < 2) {
     return "needs at least 2 players";
   }
-  if (grs < 3 || (numGroups === 1 && grs < 2)) {
-    return "groups size must be at least 3 in regular rounds - 2 in final";
-  }
-  if (grs > np) {
-    return "group size cannot be greater than the number of players left";
+  if (grs < 2) {
+    return "group size must be at least 2";
   }
   if (adv >= grs) {
     return "must advance less than the group size";
@@ -91,7 +88,7 @@ var roundInvalid = function (np, grs, adv, numGroups) {
 
 var finalInvalid = function (leftOver, limit, gLast) {
   if (leftOver < 2) {
-    return "must at least contain 2 players"; // force >4 when using limits
+    return "must contain at least 2 players"; // force >4 when using limits
   }
   var lastNg = Math.ceil(leftOver / gLast);
   if (limit > 0) { // using limits
@@ -100,7 +97,7 @@ var finalInvalid = function (leftOver, limit, gLast) {
     }
     // need limit to be a multiple of numGroups (otherwise tiebreaks necessary)
     if (limit % lastNg !== 0) {
-      return "number of matches in final round must divide limit";
+      return "number of matches must divide limit";
     }
   }
   return null;
@@ -137,7 +134,7 @@ var invalid = function (np, grs, adv, limit) {
   // last round and limit checks
   var invFinReason = finalInvalid(np, limit, grs[grs.length-1]);
   if (invFinReason !== null) {
-    return "final round: " + invFinReason;
+    return "final round " + invFinReason;
   }
 
   // nothing found - ok to create
