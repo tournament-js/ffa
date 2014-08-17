@@ -63,8 +63,11 @@ exports.invalidRound = function (t) {
   var mustElim2 = FFA.invalid(8, { sizes: [8, 2, 2], advancers: [2, 0] });
   t.equal(mustElim2, 'round 2 must eliminate players each match', 'must eliminate filled');
 
+  var bigAdv = FFA.invalid(8, { sizes : [4, 5], advancers: [5] });
+  t.equal(bigAdv, 'round 1 must advance less than the group size', 'adv < group size');
+
   // can't have noop rounds
-  var minTwo = FFA.invalid(4, { sizes: [1, 2], advancers: [1] })
+  var minTwo = FFA.invalid(4, { sizes: [1, 2], advancers: [1] });
   t.equal(minTwo, 'round 1 group size must be at least 2', 'no noop rounds');
 
   // cannot have grs > np in rounds anymore:
