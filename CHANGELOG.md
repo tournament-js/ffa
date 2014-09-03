@@ -1,3 +1,9 @@
+1.0.0 / 2014-09-03
+==================
+  * Remove `idString` but provide a `toString` function for match ids natively
+  * Remove hidden `::rep` from prototype
+  * Bump to tournament 1.0.0
+
 0.7.0 / 2014-08-17
 ==================
   * Relaxed rules for number of players in a match (always allow 2 player matches now)

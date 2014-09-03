@@ -2,6 +2,24 @@ var $ = require('interlude')
   , group = require('group')
   , Tournament = require('tournament');
 
+function Id(r, m) {
+  this.s = 1;
+  this.r = r;
+  this.m = m;
+}
+
+Id.prototype.toString = function () {
+  // ffa has no concepts of sections yet so they're all 1
+  if (!this.m) {
+    return "R" + this.r + " M X";
+  }
+  return "R" + this.r + " M" + this.m;
+};
+
+var mId = function (r, m) {
+  return new Id(r, m);
+};
+
 //------------------------------------------------------------------
 // Initialization helpers
 //------------------------------------------------------------------
@@ -32,7 +50,7 @@ var makeMatches = function (np, grs, adv) {
 
     // fill in matches
     for (var m = 0; m < grps.length; m += 1) {
-      matches.push({id: {s: 1, r: i+1, m: m + 1}, p: grps[m]}); // matches 1-indexed
+      matches.push({id: mId(i+1, m+1), p: grps[m]}); // matches 1-indexed
     }
     // reduce players left (for next round - which will exist if a is defined)
     np = numGroups*a;
@@ -168,14 +186,6 @@ FFA.configure({
   }
 });
 
-FFA.idString = function (id) {
-  // ffa has no concepts of sections yet so they're all 1
-  if (!id.m) {
-    return "R" + id.r + " M X";
-  }
-  return "R" + id.r + " M" + id.m;
-};
-
 //------------------------------------------------------------------
 // Expected methods
 //------------------------------------------------------------------
@@ -215,7 +225,7 @@ FFA.prototype._limbo = function (playerId) {
     // will he advance to nextRound ?
     var adv = this.advs[m.id.r - 1];
     if (Tournament.sorted(m).slice(0, adv).indexOf(playerId) >= 0) {
-      return {s: 1, r: m.id.r + 1};
+      return {s: 1, r: m.id.r + 1}; // TODO: no toString representation for this
     }
   }
 };
