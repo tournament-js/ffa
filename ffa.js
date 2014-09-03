@@ -9,10 +9,6 @@ function Id(r, m) {
 }
 
 Id.prototype.toString = function () {
-  // ffa has no concepts of sections yet so they're all 1
-  if (!this.m) {
-    return "R" + this.r + " M X";
-  }
   return "R" + this.r + " M" + this.m;
 };
 
