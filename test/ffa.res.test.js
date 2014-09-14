@@ -1,6 +1,28 @@
 var $ = require('interlude')
   , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
+exports.limbo = function (t) {
+  var ffa = new FFA(8, { sizes: [4, 4], advancers: [2] });
+  t.equal(ffa.matches.length, 3, "3 matches here");
+  t.deepEqual(ffa.matches[0].p, [1, 3, 6, 8], 'players in r1m1');
+  t.deepEqual(ffa.matches[1].p, [2, 4, 5, 7], 'players in r1m2');
+
+  t.equal(ffa.upcoming(1).length, 1, 'only 1 match for p1');
+  t.equal(ffa.upcoming(2).length, 1, 'only 1 match for p2');
+  t.equal(ffa.upcoming(1)[0].id.r, 1, 'match for p1 is in r1');
+  t.equal(ffa.upcoming(2)[0].id.r, 1, 'match for p2 is in r1');
+
+  t.ok(ffa.score(ffa.matches[0].id, [4,3,2,1]), 'score r1m1');
+
+  t.equal(ffa.upcoming(1).length, 0, "no upcoming matches for p1 despite winning");
+  t.deepEqual(ffa.limbo(1), { s: 1, r: 2 }, "but is in limbo");
+
+  t.equal(ffa.upcoming(8).length, 0, "no upcoming matches for p8 because ko'd");
+  t.equal(ffa.limbo(8), null, "and p8 is definitely not in limbo");
+
+  t.done();
+};
+
 
 // full test of a 16 4 2 ffa tournament
 exports.resultsStandardSixteenFour = function (t) {
@@ -33,9 +55,9 @@ exports.resultsStandardSixteenFour = function (t) {
   // check that all players have an upcoming match in round 1
   $.range(16).forEach(function (n) {
     var up = ffa.upcoming(n);
-    t.ok(up, "upcoming match for " + n + " exists");
-    t.equal(up.r, 1, "upcoming match for " + n + " exists in r1");
-    t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+    t.ok(up.length, "upcoming match for " + n + " exists");
+    t.equal(up[0].id.r, 1, "upcoming match for " + n + " exists in r1");
+    t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
   });
 
   // now score the first round
@@ -79,12 +101,12 @@ exports.resultsStandardSixteenFour = function (t) {
   $.range(16).forEach(function (n) {
     var up = ffa.upcoming(n);
     if (n <= 8) {
-      t.ok(up, "upcoming match for " + n + " exists");
-      t.equal(up.r, 2, "upcoming match for " + n + " exists in r2");
-      t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+      t.ok(up.length, "upcoming match for " + n + " exists");
+      t.equal(up[0].id.r, 2, "upcoming match for " + n + " exists in r2");
+      t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
     }
     else {
-      t.equal(up, undefined, "no upcoming r2 match for knocked out p" + n);
+      t.equal(up.length, 0, "no upcoming r2 match for knocked out p" + n);
     }
   });
 
@@ -116,12 +138,12 @@ exports.resultsStandardSixteenFour = function (t) {
   $.range(16).forEach(function (n) {
     var up = ffa.upcoming(n);
     if (n <= 4) {
-      t.ok(up, "upcoming match for " + n + " exists");
-      t.equal(up.r, 3, "upcoming match for " + n + " exists in r3");
-      t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+      t.ok(up.length, "upcoming match for " + n + " exists");
+      t.equal(up[0].id.r, 3, "upcoming match for " + n + " exists in r3");
+      t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
     }
     else {
-      t.equal(up, undefined, "no upcoming r3 match for knocked out p" + n);
+      t.equal(up.length, 0, "no upcoming r3 match for knocked out p" + n);
     }
   });
 
@@ -165,7 +187,7 @@ exports.resultsStandardSixteenFour = function (t) {
   // check that no upcoming matches now that final is scored
   $.range(16).forEach(function (n) {
     var up = ffa.upcoming(n);
-    t.ok(!up, "no upcoming match after final for player " + n);
+    t.ok(!up.length, "no upcoming match after final for player " + n);
   });
 
   gs.forEach(function (m) {
@@ -207,9 +229,9 @@ exports.resultsPowersOfThree = function (t) {
   // check that all players have an upcoming match in round 1
   $.range(81).forEach(function (n) {
     var up = ffa.upcoming(n);
-    t.ok(up, "upcoming match for " + n + " exists");
-    t.equal(up.r, 1, "upcoming match for " + n + " exists in r1");
-    t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+    t.ok(up.length, "upcoming match for " + n + " exists");
+    t.equal(up[0].id.r, 1, "upcoming match for " + n + " exists in r1");
+    t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
   });
 
   // now score the first round
@@ -248,12 +270,12 @@ exports.resultsPowersOfThree = function (t) {
   $.range(81).forEach(function (n) {
     var up = ffa.upcoming(n);
     if (n <= 27) {
-      t.ok(up, "upcoming match for " + n + " exists");
-      t.equal(up.r, 2, "upcoming match for " + n + " exists in r2");
-      t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+      t.ok(up.length, "upcoming match for " + n + " exists");
+      t.equal(up[0].id.r, 2, "upcoming match for " + n + " exists in r2");
+      t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
     }
     else {
-      t.equal(up, undefined, "no upcoming r2 match for knocked out p" + n);
+      t.equal(up.length, 0, "no upcoming r2 match for knocked out p" + n);
     }
   });
 
@@ -292,12 +314,12 @@ exports.resultsPowersOfThree = function (t) {
   $.range(81).forEach(function (n) {
     var up = ffa.upcoming(n);
     if (n <= 9) {
-      t.ok(up, "upcoming match for " + n + " exists");
-      t.equal(up.r, 3, "upcoming match for " + n + " exists in r3");
-      t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+      t.ok(up.length, "upcoming match for " + n + " exists");
+      t.equal(up[0].id.r, 3, "upcoming match for " + n + " exists in r3");
+      t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
     }
     else {
-      t.equal(up, undefined, "no upcoming r3 match for knocked out p" + n);
+      t.equal(up.length, 0, "no upcoming r3 match for knocked out p" + n);
     }
   });
 
@@ -339,12 +361,12 @@ exports.resultsPowersOfThree = function (t) {
   $.range(81).forEach(function (n) {
     var up = ffa.upcoming(n);
     if (n <= 3) {
-      t.ok(up, "upcoming match for " + n + " exists");
-      t.equal(up.r, 4, "upcoming match for " + n + " exists in r4");
-      t.ok(up.m, "upcoming match for " + n + " is fully filled in!");
+      t.ok(up.length, "upcoming match for " + n + " exists");
+      t.equal(up[0].id.r, 4, "upcoming match for " + n + " exists in r4");
+      t.ok(up[0].id.m, "upcoming match for " + n + " is fully filled in!");
     }
     else {
-      t.equal(up, undefined, "no r4 match for knocked out p" + n);
+      t.equal(up.length, 0, "no r4 match for knocked out p" + n);
     }
   });
 
@@ -375,7 +397,7 @@ exports.resultsPowersOfThree = function (t) {
 
   $.range(81).forEach(function (n) {
     var up = ffa.upcoming(n);
-    t.equal(up, undefined, "tournament over, no no upcoming match for p" + n);
+    t.equal(up.length, 0, "tournament over, no no upcoming match for p" + n);
   });
 
   t.done();

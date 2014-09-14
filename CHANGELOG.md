@@ -1,3 +1,9 @@
+2.0.0 / 2014-09-14
+==================
+  * **BREAKING** upcoming now returns array of matches and never a partial id
+  * Partial ids for players in limbo can be gotten separately on ::limbo(playerid)
+  * Bump tournament to 2.0.0
+
 1.0.0 / 2014-09-03
 ==================
   * Remove `idString` but provide a `toString` function for match ids natively
