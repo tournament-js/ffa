@@ -2,7 +2,7 @@
   "name": "ffa",
   "description": "Free-for-all elimination tournaments",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "stability": "unstable",
   "repository": {
     "type": "git",
