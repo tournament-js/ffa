@@ -190,9 +190,10 @@ exports.resultsStandardSixteenFour = function (t) {
     t.ok(!up.length, "no upcoming match after final for player " + n);
   });
 
-  gs.forEach(function (m) {
-    t.ok(ffa.unscorable(m.id, [4,3,2,1]), "cant score anything after final is done");
+  gs.slice(0, -1).forEach(function (m) {
+    t.ok(ffa.unscorable(m.id, [4,3,2,1]), "cant score earlier after final is done");
   });
+  t.equal(ffa.unscorable($.last(gs).id, [4,3,2,1]), null, 'can still rescore final');
 
   t.done();
 };

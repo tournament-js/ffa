@@ -209,6 +209,14 @@ FFA.prototype._progress = function (match) {
   }
 };
 
+FFA.prototype._safe = function (match) {
+  var nextRnd = this.findMatches({ r: match.id.r + 1 });
+  // safe iff next round has not started
+  return nextRnd.every(function(m) {
+    return !Array.isArray(m.m);
+  });
+};
+
 FFA.prototype._verify = function (match, score) {
   var adv = this.advs[match.id.r - 1] || 0;
   if (adv > 0 && score[adv] === score[adv - 1]) {
