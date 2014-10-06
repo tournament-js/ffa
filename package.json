@@ -3,7 +3,7 @@
   "description": "Free-for-all elimination tournaments",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
   "version": "2.1.0",
-  "stability": "unstable",
+  "stability": "stable",
   "repository": {
     "type": "git",
     "url": "clux/ffa"

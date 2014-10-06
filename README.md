@@ -3,7 +3,7 @@
 [![build status](https://secure.travis-ci.org/clux/ffa.svg)](http://travis-ci.org/clux/ffa)
 [![dependency status](https://david-dm.org/clux/ffa.svg)](https://david-dm.org/clux/ffa)
 [![coverage status](http://img.shields.io/coveralls/clux/ffa.svg)](https://coveralls.io/r/clux/ffa)
-[![unstable](http://img.shields.io/badge/stability-unstable-E5AE13.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
+[![stable](http://img.shields.io/badge/stability-stable-74C614.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
 
 ## Overview
 FFA is a very general tournament building block that you can take in many directions (only a few of which are commonly explored).
