@@ -86,13 +86,8 @@ exports.unfinishedSixteenFour = function (t) {
 
 exports.unfinishedSixteenFourLimited = function (t) {
   var opts = { sizes: [4, 4], advancers: [2], limit: 4 };
-  var ffaB = new FFA(16, opts);
-
-  // quick serialization test as only case atm
-  var ffa = FFA.parse(ffaB + '')
+  var ffa = new FFA(16, opts)
     , gs = ffa.matches;
-
-  t.ok(gs.length > 0, "could create ffa with limits");
 
   // score first 4
   $.range(4).forEach(function (n) {

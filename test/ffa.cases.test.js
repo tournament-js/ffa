@@ -1,24 +1,6 @@
 var $ = require('interlude')
   , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
 
-
-exports.serialize = function (t) {
-  var opts = { sizes: [4,4,4], advancers: [2,2] };
-  t.equal(FFA.invalid(16, opts), null, "can construct 16 4 2 FFA");
-  var ffa = new FFA(16, opts);
-  var ffa2 = FFA.parse(ffa + '');
-
-  t.deepEqual(ffa.matches, ffa2.matches, "matches same");
-  t.deepEqual(ffa.advs, ffa2.advs, "advancers recalculated correctly");
-  t.equal(ffa.numPlayers, ffa2.numPlayers, "numPlayers kept correctly");
-
-  ffa2.matches.forEach(function (g) {
-    t.ok(ffa2.score(g.id, [4,3,2,1]), "should be able to score all these matches");
-  });
-
-  t.done();
-};
-
 var getMaxLen = function (rnd) {
   return $.maximum($.pluck('length', $.pluck('p', rnd)));
 };
