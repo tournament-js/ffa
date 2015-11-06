@@ -4,7 +4,7 @@ sudo: false
 node_js:
   - 0.10
   - 4
-  - latest
+  - node
 
 notifications:
   email: false
