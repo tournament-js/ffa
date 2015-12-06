@@ -1,9 +1,10 @@
 var $ = require('interlude')
  , FFA = require('../')
+ , nullLog = require('smell')()
  , test = require('bandage');
 
 test('unfinishedFiveFiveLimited', function *(t) {
-  var opts = { sizes: [5], limit: 4 };
+  var opts = { sizes: [5], limit: 4, log: nullLog };
   var ffa = new FFA(5, opts);
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,3,2,2]), 'cannot score so we are tied at limit');
@@ -16,7 +17,7 @@ test('unfinishedFiveFiveLimited', function *(t) {
 });
 
 test('unfinishedTenFiveLimited', function *(t) {
-  var opts = { sizes: [5] , limit: 4 };
+  var opts = { sizes: [5] , limit: 4, log: nullLog };
   var ffa = new FFA(10, opts);
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,4,2,1]), 'cannot score so we are tied at limit/NG');
@@ -31,7 +32,7 @@ test('unfinishedTenFiveLimited', function *(t) {
 });
 
 test('unfinishedFifteenFiveLimited', function *(t) {
-  var opts = { sizes: [5] , limit: 6 };
+  var opts = { sizes: [5] , limit: 6, log: nullLog };
   var ffa = new FFA(15, opts); // limit must divide num groups
   var ms = ffa.matches;
   t.ok(!ffa.score(ms[0].id, [5,4,4,2,1]), 'cannot score so we are tied at limit');

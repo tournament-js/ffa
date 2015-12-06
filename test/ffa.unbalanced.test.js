@@ -1,29 +1,30 @@
 var $ = require('interlude')
  , FFA = require('../')
+ , nullLog = require('smell')()
  , test = require('bandage');
 
-var makeStr = function(r) {
+var makeStr = function (r) {
   var str = r.pos + ' P' + r.seed + ' W=' + r.wins;
   str += ' F=' + r.for + ' A=' + r.against;
   return str;
 };
 
 test('unbalancedFifteen', function *(t) {
-  var ffa = new FFA(15, { sizes: [4, 4], advancers: [2] });
+  var ffa = new FFA(15, { sizes: [4, 4], advancers: [2], log: nullLog });
   var fm = ffa.matches;
 
   t.eq(fm[0].p, [1, 5, 12], 'R1M1.p');
-  t.ne(ffa.score(fm[0].id, [4,3,3]), null, 'cant tie at adv');
-  t.ne(ffa.score(fm[0].id, [4,4,2]), null, 'can tie outside adv');
+  t.false(ffa.score(fm[0].id, [4,3,3]), 'cant tie at adv');
+  t.ok(ffa.score(fm[0].id, [4,4,2]), 'can tie outside adv');
   t.eq(fm[1].p, [2, 6, 11, 15], 'R1M2.p');
-  t.ne(ffa.score(fm[1].id, [4, 3, 3, 1]), null, 'cant tie at adv');
-  t.ne(ffa.score(fm[1].id, [3, 3, 2, 2]), null, 'can tie outside adv');
+  t.false(ffa.score(fm[1].id, [4, 3, 3, 1]), 'cant tie at adv');
+  t.ok(ffa.score(fm[1].id, [3, 3, 2, 2]), 'can tie outside adv');
   t.eq(fm[2].p, [3, 7, 10, 14], 'R1M3.p');
-  t.ne(ffa.score(fm[2].id, [4, 3, 3, 1]), null, 'cant tie at adv');
-  t.ne(ffa.score(fm[2].id, [3, 3, 2, 2]), null, 'can tie outside adv');
+  t.false(ffa.score(fm[2].id, [4, 3, 3, 1]), 'cant tie at adv');
+  t.ok(ffa.score(fm[2].id, [3, 3, 2, 2]), 'can tie outside adv');
   t.eq(fm[3].p, [4, 8, 9, 13], 'R1M4.p');
-  t.ne(ffa.score(fm[3].id, [4, 3, 3, 1]), null, 'cant tie at adv');
-  t.ne(ffa.score(fm[3].id, [3, 3, 2, 1]), null, 'can tie outside adv');
+  t.false(ffa.score(fm[3].id, [4, 3, 3, 1]), 'cant tie at adv');
+  t.ok(ffa.score(fm[3].id, [3, 3, 2, 1]), 'can tie outside adv');
 
   var res = ffa.results();
   var koR1 = [

@@ -1,3 +1,7 @@
+3.1.0 / 2015-12-06
+==================
+  * Bump tournament@3.1.0 for configurable logs
+
 3.0.0 / 2014-10-11
 ==================
   * Bump tournament to 3.0.0 for better serialization via `::state` and `.restore`
