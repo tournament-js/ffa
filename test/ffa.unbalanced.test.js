@@ -1,5 +1,6 @@
 var $ = require('interlude')
-  , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require('../')
+ , test = require('bandage');
 
 var makeStr = function(r) {
   var str = r.pos + " P" + r.seed + " W=" + r.wins;
@@ -7,7 +8,7 @@ var makeStr = function(r) {
   return str;
 };
 
-exports.unbalancedFifteen = function (t) {
+test('unbalancedFifteen', function *(t) {
   var ffa = new FFA(15, { sizes: [4, 4], advancers: [2] });
   var fm = ffa.matches;
 
@@ -78,6 +79,4 @@ exports.unbalancedFifteen = function (t) {
       [ [5], [3, 4, 7], [], [] ]
     ], 'posAry for ffa'
   );
-
-  t.done();
-};
+});

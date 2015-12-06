@@ -1,7 +1,8 @@
 var $ = require('interlude')
- , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require('../')
+ , test = require('bandage');
 
-exports.history = function (t) {
+test('history', function *(t) {
   var ffa = new FFA(16, { sizes: [4, 4, 4], advancers: [2, 2] });
 
   // initial unscorable check
@@ -10,7 +11,7 @@ exports.history = function (t) {
     t.ok(ffa.score(m.id, [1,2,3,4]), 'score unplayed r1')
   });
   t.deepEqual(ffa.players({r:2}), [9,10,11,12,13,14,15,16], 'bottom half won r1');
-  
+
   // ok to change history before r2 has started
   ffa.findMatches({r: 1}).forEach(function (m) {
     t.equal(ffa.unscorable(m.id, [4,3,2,1]), null, 'scorable played r1');
@@ -47,8 +48,4 @@ exports.history = function (t) {
       'unscorable r1/r2 match when r3 played'
     );
   });
-
-  
-  
-  t.done();
-};
+});

@@ -1,12 +1,13 @@
 var $ = require('interlude')
-  , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require('../')
+ , test = require('bandage');
 
 var getMaxLen = function (rnd) {
   return $.maximum($.pluck('length', $.pluck('p', rnd)));
 };
 
 // nice layout, 32 8 2 ensure it's right
-exports.sizeEightGroups = function (t) {
+test('sizeEightGroups', function *(t) {
   var opts = { sizes: [8, 8], advancers: [2] };
   t.equal(FFA.invalid(32, opts), null, "can construct 32 8 2 FFA");
   var ffa = new FFA(32, opts);
@@ -19,12 +20,10 @@ exports.sizeEightGroups = function (t) {
 
   t.equal(r2.length, 1, "4*2=8, proceeding => 1 groups of 8 in r2");
   t.equal(getMaxLen(r2), 8, "1x8 in r2");
-
-  t.done();
-};
+});
 
 // nice layout, 25 5 1 ensure it's right
-exports.powersFive = function (t) {
+test('powersFive', function *(t) {
   var opts = { sizes: [5, 5], advancers: [1] };
   t.equal(FFA.invalid(25, opts), null, "can construct 25 5 1 FFA");
   var ffa = new FFA(25, opts);
@@ -37,12 +36,10 @@ exports.powersFive = function (t) {
 
   t.equal(r2.length, 1, "5*1=5, proceeding => 1 groups of 5 in r2");
   t.equal(getMaxLen(r2), 5, "1x5 in r2");
-
-  t.done();
-};
+});
 
 // awful layout: 28 7 3
-exports.uglySevensManual = function (t) {
+test('uglySevensManual', function *(t) {
   var opts = { sizes: [7, 6, 6], advancers: [3, 3] };
   t.equal(FFA.invalid(28, opts), null, "can construct 28 7 3 FFA");
   var ffa = new FFA(28, opts);
@@ -59,12 +56,10 @@ exports.uglySevensManual = function (t) {
 
   t.equal(r3.length, 1, "2*3=6 proceeding => 1 group of 6 in r3");
   t.equal(getMaxLen(r3), 6, "1x6 in r3");
-
-  t.done();
-};
+});
 
 // will also work if you put [7, 7, 7] - group reduction is automatic
-exports.uglySevensAutomatic = function (t) {
+test('uglySevensAutomatic', function *(t) {
   var opts = { sizes: [7, 7, 7], advancers: [3, 3] };
   t.equal(FFA.invalid(28, opts), null, "can construct 28 7,7,7 3,3 FFA");
   // would work for [7,6,6] also
@@ -84,12 +79,10 @@ exports.uglySevensAutomatic = function (t) {
 
   t.equal(r3.length, 1, "2*3=6 proceeding => 1 group of 6 in r3");
   t.equal(getMaxLen(r3), 6, "1x6 in r3");
-
-  t.done();
-};
+});
 
 // difficult layout: 36 6 3 - reduce advancers for final
-exports.nonStandardSixes = function (t) {
+test('nonStandardSixes', function *(t) {
   var opts = { sizes: [6, 6, 6], advancers: [3, 2] };
   t.equal(FFA.invalid(36, opts), null, "can construct 32 6,6,6 3,2 FFA");
   var ffa = new FFA(36, opts);
@@ -106,12 +99,10 @@ exports.nonStandardSixes = function (t) {
 
   t.equal(r3.length, 1, "3*2=6 proceeding => 1 group of 6 in r3");
   t.equal(getMaxLen(r3), 6, "1x6 in r3");
-
-  t.done();
-};
+});
 
 // difficult layout: 49 7 3 - reduces advancers for final
-exports.nonStandardSevens = function (t) {
+test('nonStandardSevens', function *(t) {
   var opts = { sizes: [7, 7, 6], advancers: [3,2] };
   t.equal(FFA.invalid(49, opts), null, "can construct 49 7,7,6 3,2 FFA");
   var ffa = new FFA(49, opts);
@@ -128,12 +119,10 @@ exports.nonStandardSevens = function (t) {
 
   t.equal(r3.length, 1, "3*2=6 proceeding => 1 group of 6 in r3");
   t.equal(getMaxLen(r3), 6, "1x6 in r3");
-
-  t.done();
-};
+});
 
 // really dragged out 16p were we only kill one from each group
-exports.advanceAlmostEveryone = function (t) {
+test('advanceAlmostEveryone', function *(t) {
   var opts = { sizes: [4,4,3,3,4], advancers: [3,3,2,2] };
   t.equal(FFA.invalid(16, opts), null, "can FFA 16 4 3");
   var ffa = new FFA(16, opts);
@@ -158,6 +147,4 @@ exports.advanceAlmostEveryone = function (t) {
 
   t.equal(r5.length, 1, "1*4=4, 1 group of 4 proceeding");
   t.equal(getMaxLen(r5), 4, "1x4 in r5");
-
-  t.done();
-};
+});

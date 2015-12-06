@@ -14,17 +14,19 @@
   ],
   "main": "ffa.js",
   "scripts": {
-    "test": "nodeunit test/*.js --reporter=verbose",
-    "coverage": "jscoverage ffa.js && FFA_COV=1 nodeunit --reporter=lcov test"
+    "test": "bndg test/*.js",
+    "precoverage": "istanbul cover bndg test/*.test.js",
+    "coverage": "cat coverage/lcov.info && rm -rf coverage"
   },
   "dependencies": {
     "interlude": "^1.1.0",
-    "group": "^0.2.0",
-    "tournament": "^3.0.0"
+    "group": "^1.0.0",
+    "tournament": "^3.1.0"
   },
   "devDependencies": {
-    "jscoverage": "^0.5.5",
-    "nodeunit": "^0.9.0"
+    "bandage": "^0.3.1",
+    "istanbul": "^0.4.0",
+    "smell": "^2.0.6"
   },
   "bugs": {
     "url": "http://github.com/clux/ffa/issues"

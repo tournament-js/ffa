@@ -1,7 +1,8 @@
 var $ = require('interlude')
- , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require('../')
+ , test = require('bandage');
 
-exports.unfinishedFiveFiveLimited = function (t) {
+test('unfinishedFiveFiveLimited', function *(t) {
   var opts = { sizes: [5], limit: 4 };
   var ffa = new FFA(5, opts);
   var ms = ffa.matches;
@@ -13,10 +14,9 @@ exports.unfinishedFiveFiveLimited = function (t) {
     t.equal(r.pos, i+1, "positions should be linear from 1");
   });
 
-  t.done();
-};
+});
 
-exports.unfinishedTenFiveLimited = function (t) {
+test('unfinishedTenFiveLimited', function *(t) {
   var opts = { sizes: [5] , limit: 4 };
   var ffa = new FFA(10, opts);
   var ms = ffa.matches;
@@ -30,10 +30,9 @@ exports.unfinishedTenFiveLimited = function (t) {
     t.equal(r.pos, nearestOdd, "positions should tie on odds");
   });
 
-  t.done();
-};
+});
 
-exports.unfinishedFifteenFiveLimited = function (t) {
+test('unfinishedFifteenFiveLimited', function *(t) {
   var opts = { sizes: [5] , limit: 6 };
   var ffa = new FFA(15, opts); // limit must divide num groups
   var ms = ffa.matches;
@@ -48,10 +47,9 @@ exports.unfinishedFifteenFiveLimited = function (t) {
     t.equal(r.pos, nearestPlus3, "positions should tie on every 3rd (and =1 mod3)");
   });
 
-  t.done();
-};
+});
 
-exports.unfinishedSixteenFour = function (t) {
+test('unfinishedSixteenFour', function *(t) {
   var opts = { sizes: [4, 4], advancers: [2] };
   var ffa = new FFA(16, opts);
   var fm = ffa.matches;
@@ -81,10 +79,9 @@ exports.unfinishedSixteenFour = function (t) {
     }
   })
 
-  t.done();
-};
+});
 
-exports.unfinishedSixteenFourLimited = function (t) {
+test('unfinishedSixteenFourLimited', function *(t) {
   var opts = { sizes: [4, 4], advancers: [2], limit: 4 };
   var ffa = new FFA(16, opts)
     , gs = ffa.matches;
@@ -206,5 +203,4 @@ exports.unfinishedSixteenFourLimited = function (t) {
     }
   });
 
-  t.done();
-};
+});

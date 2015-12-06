@@ -1,19 +1,17 @@
-var FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+var FFA = require('../');
+var test = require('bandage');
 
-exports.invalidsThrow = function (t) {
-  t.expect(2);
+test('invalidsThrow', function *(t) {
   var reason = "number of players must be at least 2";
-  try {
-    new FFA(1);
-  }
-  catch (e) {
-    t.equal(e.message, "Cannot construct FFA: " + reason, 'reason in error.message');
-  }
+  var ctorTry = function *() {
+    return new FFA(1);
+  };
+  var reg = new RegExp('Cannot construct FFA: ' + reason);
+  t.throws(ctorTry, reg, 'reason in error.message')
   t.equal(FFA.invalid(1), reason, ".invalid returns reason");
-  t.done();
-};
+});
 
-exports.invalidSanity = function (t) {
+test('invalidSanity', function *(t) {
   t.equal(null, FFA.invalid(2, { sizes: null }), "non-array sizes forces default");
   var emptySizes = FFA.invalid(2, { sizes: [] });
   t.equal(emptySizes, "sizes must be a non-empty array of integers", 'sizes empty');
@@ -24,11 +22,9 @@ exports.invalidSanity = function (t) {
   var advLen = FFA.invalid(8, { sizes: [4, 4] });
   t.equal(advLen, "advancers must be a sizes.length-1 length array of integers", "adv");
   t.equal(null, FFA.invalid(8, { sizes: [4, 4], advancers: [2] }), 'correct adv ok');
+});
 
-  t.done();
-};
-
-exports.invalidFinal = function (t) {
+test('invalidFinal', function *(t) {
   var singleLeft = FFA.invalid(8, { sizes: [8, 1], advancers: [1] });
   t.equal(singleLeft, 'final round must contain at least 2 players', 'cant leave one');
 
@@ -44,11 +40,9 @@ exports.invalidFinal = function (t) {
 
   t.equal(null, FFA.invalid(8, { sizes: [4], limit: 6 }), 'limit divides');
   t.equal(null, FFA.invalid(8, { sizes: [4], limit: 2 }), 'limit can be two');
+});
 
-  t.done();
-};
-
-exports.invalidRound = function (t) {
+test('invalidRound', function *(t) {
   t.equal(null, FFA.invalid(4, { sizes: [2, 2], advancers: [1] }), "duel style allowed");
 
   // hard to trigger: you need to pretend that it's another round after a <2p rnd
@@ -78,6 +72,4 @@ exports.invalidRound = function (t) {
   var r2m = f.findMatches({ r: 2 })[0];
   t.equal(r2m.p.length, 9, 'large group sizes reduced');
   t.deepEqual(f.sizes, opts.sizes, 'sizes still reflect what was passed in');
-
-  t.done();
-};
+});

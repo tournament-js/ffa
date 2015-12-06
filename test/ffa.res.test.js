@@ -1,7 +1,8 @@
 var $ = require('interlude')
-  , FFA = require(process.env.FFA_COV ? '../ffa-cov.js' : '../');
+ , FFA = require('../')
+ , test = require('bandage');
 
-exports.limbo = function (t) {
+test('limbo', function *(t) {
   var ffa = new FFA(8, { sizes: [4, 4], advancers: [2] });
   t.equal(ffa.matches.length, 3, "3 matches here");
   t.deepEqual(ffa.matches[0].p, [1, 3, 6, 8], 'players in r1m1');
@@ -18,14 +19,12 @@ exports.limbo = function (t) {
   t.deepEqual(ffa.limbo(1), { s: 1, r: 2 }, "but is in limbo");
 
   t.equal(ffa.upcoming(8).length, 0, "no upcoming matches for p8 because ko'd");
-  t.equal(ffa.limbo(8), null, "and p8 is definitely not in limbo");
-
-  t.done();
-};
+  t.ok(ffa.limbo(8) == null, "and p8 is definitely not in limbo");
+});
 
 
 // full test of a 16 4 2 ffa tournament
-exports.resultsStandardSixteenFour = function (t) {
+test('resultsStandardSixteenFour', function *(t) {
   var opts = { sizes: [4, 4, 4], advancers: [2, 2] };
   var ffa = new FFA(16, opts)
     , gs = ffa.matches;
@@ -194,13 +193,11 @@ exports.resultsStandardSixteenFour = function (t) {
     t.ok(ffa.unscorable(m.id, [4,3,2,1]), "cant score earlier after final is done");
   });
   t.equal(ffa.unscorable($.last(gs).id, [4,3,2,1]), null, 'can still rescore final');
-
-  t.done();
-};
+});
 
 
 // full test of a 81 3 1 ffa tournament
-exports.resultsPowersOfThree = function (t) {
+test('resultsPowersOfThree', function *(t) {
   var opts = { sizes: [3, 3, 3, 3], advancers: [1, 1, 1] };
   var ffa = new FFA(81, opts)
     , gs = ffa.matches;
@@ -400,6 +397,4 @@ exports.resultsPowersOfThree = function (t) {
     var up = ffa.upcoming(n);
     t.equal(up.length, 0, "tournament over, no no upcoming match for p" + n);
   });
-
-  t.done();
-};
+});
