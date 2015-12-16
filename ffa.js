@@ -320,5 +320,7 @@ FFA.prototype.rawPositions = function (res) {
   return posAry;
 };
 
+// ------------------------------------------------------------------
 
+FFA.Id = Id;
 module.exports = FFA;

@@ -1,3 +1,7 @@
+3.2.0 / 2015-12-16
+==================
+  * Expose `FFA.Id` for consistency
+
 3.1.0 / 2015-12-06
 ==================
   * Bump tournament@3.1.0 for configurable logs
