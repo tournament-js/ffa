@@ -238,7 +238,7 @@ test('resultsPowersOfThree', function *(t) {
   });
 
   // verify snd round filled in
-  t.eq(ffa.players({r:2}), $.range(27), 'r2 players are winners of r1');
+  t.eq(ffa.players({r: 2}), $.range(27), 'r2 players are winners of r1');
 
   // check r2 stats computed correctly
   var res2 = ffa.results();
@@ -283,7 +283,7 @@ test('resultsPowersOfThree', function *(t) {
   });
 
   // verify snd round filled in
-  t.eq(ffa.players({r:3}), $.range(9), 'r3 players are winners of r2');
+  t.eq(ffa.players({r: 3}), $.range(9), 'r3 players are winners of r2');
 
   var res3 = ffa.results();
   t.ok(res3, 'got results 3');
@@ -327,7 +327,7 @@ test('resultsPowersOfThree', function *(t) {
   });
 
   // verify next round filled in
-  t.eq(ffa.players({r:4}), $.range(3), 'r4 players are winners of r3');
+  t.eq(ffa.players({r: 4}), $.range(3), 'r4 players are winners of r3');
 
   var res4 = ffa.results();
   t.ok(res4, 'got results 4');
@@ -371,7 +371,7 @@ test('resultsPowersOfThree', function *(t) {
   t.eq(ffa.unscorable({s: 1, r: 4, m: 1}, [3,2,1]), null, 'gf scorable');
   ffa.score({s: 1, r: 4, m: 1}, [3, 2, 1]);
 
-  t.eq(ffa.findMatches({r:5}), [], 'r5 should not exist');
+  t.eq(ffa.findMatches({r: 5}), [], 'r5 should not exist');
 
   var res5 = ffa.results();
   t.ok(res5, 'got results 5');

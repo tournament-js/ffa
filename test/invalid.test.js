@@ -7,7 +7,7 @@ test('invalidsThrow', function *(t) {
     return new FFA(1);
   };
   var reg = new RegExp('Cannot construct FFA: ' + reason);
-  t.throws(ctorTry, reg, 'reason in error.message')
+  t.throws(ctorTry, reg, 'reason in error.message');
   t.eq(FFA.invalid(1), reason, '.invalid returns reason');
 });
 
@@ -57,7 +57,7 @@ test('invalidRound', function *(t) {
   var mustElim2 = FFA.invalid(8, { sizes: [8, 2, 2], advancers: [2, 0] });
   t.eq(mustElim2, 'round 2 must eliminate players each match', 'must eliminate filled');
 
-  var bigAdv = FFA.invalid(8, { sizes : [4, 5], advancers: [5] });
+  var bigAdv = FFA.invalid(8, { sizes: [4, 5], advancers: [5] });
   t.eq(bigAdv, 'round 1 must advance less than the group size', 'adv < group size');
 
   // can't have noop rounds
@@ -68,7 +68,7 @@ test('invalidRound', function *(t) {
   var opts = { sizes: [5, 14, 2], advancers: [3, 2] };
   var largeGs = FFA.invalid(15, opts);
   t.eq(largeGs, null, 'large group sizes allowed');
-  var f = FFA(15, opts);
+  var f = new FFA(15, opts);
   var r2m = f.findMatches({ r: 2 })[0];
   t.eq(r2m.p.length, 9, 'large group sizes reduced');
   t.eq(f.sizes, opts.sizes, 'sizes still reflect what was passed in');

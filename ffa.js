@@ -9,7 +9,7 @@ function Id(r, m) {
 }
 
 Id.prototype.toString = function () {
-  return "R" + this.r + " M" + this.m;
+  return 'R' + this.r + ' M' + this.m;
 };
 
 var mId = function (r, m) {
@@ -37,7 +37,7 @@ var makeMatches = function (np, grs, adv) {
       , grps = group(np, gs);
 
     if (numGroups !== grps.length) {
-      throw new Error("internal FFA construction error");
+      throw new Error('internal FFA construction error');
     }
     if (i > 0) {
       // only fill in seeding numbers for round 1, otherwise placeholders
@@ -82,36 +82,36 @@ var prepRound = function (currRnd, nxtRnd, adv) {
 var roundInvalid = function (np, grs, adv, numGroups) {
   // the group size in here refers to the maximal reduced group size
   if (np < 2) {
-    return "needs at least 2 players";
+    return 'needs at least 2 players';
   }
   if (grs < 2) {
-    return "group size must be at least 2";
+    return 'group size must be at least 2';
   }
   if (adv >= grs) {
-    return "must advance less than the group size";
+    return 'must advance less than the group size';
   }
   var isUnfilled = (np % numGroups) > 0;
   if (isUnfilled && adv >= grs - 1) {
-    return "must advance less than the smallest match size";
+    return 'must advance less than the smallest match size';
   }
   if (adv <= 0) {
-    return "must eliminate players each match";
+    return 'must eliminate players each match';
   }
   return null;
 };
 
 var finalInvalid = function (leftOver, limit, gLast) {
   if (leftOver < 2) {
-    return "must contain at least 2 players"; // force >4 when using limits
+    return 'must contain at least 2 players'; // force >4 when using limits
   }
   var lastNg = Math.ceil(leftOver / gLast);
   if (limit > 0) { // using limits
     if (limit >= leftOver) {
-      return "limit must be less than the remaining number of players";
+      return 'limit must be less than the remaining number of players';
     }
     // need limit to be a multiple of numGroups (otherwise tiebreaks necessary)
     if (limit % lastNg !== 0) {
-      return "number of matches must divide limit";
+      return 'number of matches must divide limit';
     }
   }
   return null;
@@ -119,13 +119,13 @@ var finalInvalid = function (leftOver, limit, gLast) {
 
 var invalid = function (np, grs, adv, limit) {
   if (np < 2) {
-    return "number of players must be at least 2";
+    return 'number of players must be at least 2';
   }
   if (!grs.length || !grs.every(Tournament.isInteger)) {
-    return "sizes must be a non-empty array of integers";
+    return 'sizes must be a non-empty array of integers';
   }
   if (!adv.every(Tournament.isInteger) || grs.length !== adv.length + 1) {
-    return "advancers must be a sizes.length-1 length array of integers";
+    return 'advancers must be a sizes.length-1 length array of integers';
   }
 
   var numGroups = 0;
@@ -140,7 +140,7 @@ var invalid = function (np, grs, adv, limit) {
     // and ensure with group reduction that eliminationValid for reduced params
     var invReason = roundInvalid(np, gActual, a, numGroups);
     if (invReason !== null) {
-      return "round " + (i+1) + " " + invReason;
+      return 'round ' + (i+1) + ' ' + invReason;
     }
     // return how many players left so that np is updated for next itr
     np = numGroups*a;
@@ -148,7 +148,7 @@ var invalid = function (np, grs, adv, limit) {
   // last round and limit checks
   var invFinReason = finalInvalid(np, limit, grs[grs.length-1]);
   if (invFinReason !== null) {
-    return "final round " + invFinReason;
+    return 'final round ' + invFinReason;
   }
 
   // nothing found - ok to create
@@ -184,8 +184,8 @@ FFA.configure({
 
 FFA.prototype.limbo = function (playerId) {
   // if player reached currentRound, he may be waiting for generation of nextRound
-  var m = $.firstBy(function (m) {
-    return m.p.indexOf(playerId) >= 0 && m.m;
+  var m = $.firstBy(function (g) {
+    return g.p.indexOf(playerId) >= 0 && g.m;
   }, this.currentRound() || []);
 
   if (m) {
@@ -197,9 +197,9 @@ FFA.prototype.limbo = function (playerId) {
   }
 };
 
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 // Expected methods
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 
 FFA.prototype._progress = function (match) {
   var adv = this.advs[match.id.r - 1] || 0;
@@ -212,7 +212,7 @@ FFA.prototype._progress = function (match) {
 FFA.prototype._safe = function (match) {
   var nextRnd = this.findMatches({ r: match.id.r + 1 });
   // safe iff next round has not started
-  return nextRnd.every(function(m) {
+  return nextRnd.every(function (m) {
     return !Array.isArray(m.m);
   });
 };
@@ -220,7 +220,7 @@ FFA.prototype._safe = function (match) {
 FFA.prototype._verify = function (match, score) {
   var adv = this.advs[match.id.r - 1] || 0;
   if (adv > 0 && score[adv] === score[adv - 1]) {
-    return "scores must unambiguous decide who advances";
+    return 'scores must unambiguous decide who advances';
   }
   if (!adv && this.limit > 0) {
     // number of groups in last round is the match number of the very last match
@@ -228,7 +228,7 @@ FFA.prototype._verify = function (match, score) {
     var lastNG = this.matches[this.matches.length-1].id.m;
     var cutoff = this.limit/lastNG; // NB: lastNG divides limit (from finalInvalid)
     if (score[cutoff] === score[cutoff - 1]) {
-      return "scores must decide who advances in final round with limits";
+      return 'scores must decide who advances in final round with limits';
     }
   }
   return null;
@@ -305,7 +305,7 @@ FFA.prototype._sort = function (res) {
 // helper method to be compatible with TieBreaker
 FFA.prototype.rawPositions = function (res) {
   if (!this.isDone()) {
-    throw new Error("cannot tiebreak a FFA tournament until it is finished");
+    throw new Error('cannot tiebreak a FFA tournament until it is finished');
   }
   var maxround = this.sizes.length;
   var finalRound = this.findMatches({ r: maxround });

@@ -38,17 +38,18 @@ test('unbalancedFifteen', function *(t) {
     '15 P13 W=0 F=1 A=2'
   ];
   t.eq(res.map(makeStr), [
-      // 1, 5 tied for first in R1M1
-      '8 P1 W=1 F=4 A=0',
-      '8 P5 W=1 F=4 A=0',
-      // 2, 3 and 4 tied with 6, 7 and 8 resp for first in R1MX x>1
-      '8 P2 W=1 F=3 A=0',
-      '8 P3 W=1 F=3 A=0',
-      '8 P4 W=1 F=3 A=0',
-      '8 P6 W=1 F=3 A=0',
-      '8 P7 W=1 F=3 A=0',
-      '8 P8 W=1 F=3 A=0',
-    ].concat(koR1), 'r1 results');
+    // 1, 5 tied for first in R1M1
+    '8 P1 W=1 F=4 A=0',
+    '8 P5 W=1 F=4 A=0',
+    // 2, 3 and 4 tied with 6, 7 and 8 resp for first in R1MX x>1
+    '8 P2 W=1 F=3 A=0',
+    '8 P3 W=1 F=3 A=0',
+    '8 P4 W=1 F=3 A=0',
+    '8 P6 W=1 F=3 A=0',
+    '8 P7 W=1 F=3 A=0',
+    '8 P8 W=1 F=3 A=0'].concat(koR1),
+    'r1 results'
+  );
 
   t.eq(fm[4].p, [1, 2, 6, 8]);
   t.eq(fm[5].p, [5, 3, 4, 7]); // ordered because reseeded
@@ -61,23 +62,23 @@ test('unbalancedFifteen', function *(t) {
 
   var res2 = ffa.results();
   t.eq(res2.map(makeStr), [
-      // 1st placers
-      '1 P1 W=2 F=8 A=0',
-      '1 P5 W=2 F=8 A=0',
-      '1 P2 W=2 F=7 A=0',
-      '1 P6 W=2 F=7 A=0',
-      // 2nd placers (who slightly unfairly all get 5th)
-      '5 P3 W=1 F=6 A=1',
-      '5 P4 W=1 F=6 A=1',
-      '5 P7 W=1 F=6 A=1',
-      // 4th placers
-      '8 P8 W=1 F=4 A=3',
-    ].concat(koR1), 'r2 results'
+    // 1st placers
+    '1 P1 W=2 F=8 A=0',
+    '1 P5 W=2 F=8 A=0',
+    '1 P2 W=2 F=7 A=0',
+    '1 P6 W=2 F=7 A=0',
+    // 2nd placers (who slightly unfairly all get 5th)
+    '5 P3 W=1 F=6 A=1',
+    '5 P4 W=1 F=6 A=1',
+    '5 P7 W=1 F=6 A=1',
+    // 4th placers
+    '8 P8 W=1 F=4 A=3'].concat(koR1),
+    'r2 results'
   );
 
   t.eq(ffa.rawPositions(res2), [
-      [ [1, 2, 6], [], [], [8] ],
-      [ [5], [3, 4, 7], [], [] ]
-    ], 'posAry for ffa'
+    [ [1, 2, 6], [], [], [8] ],
+    [ [5], [3, 4, 7], [], [] ] ],
+    'posAry for ffa'
   );
 });
