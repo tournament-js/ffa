@@ -49,3 +49,32 @@ test('history', function *(t) {
     );
   });
 });
+
+test('unambiguous', function *(t) {
+  var ffa = new FFA(16, { sizes: [4, 4, 4], advancers: [2, 2] });
+  var match = ffa.findMatch({s: 1, r: 1, m: 1})
+
+  t.eq(
+    ffa.unscorable(match.id, [0, 0, 0, 0]),
+    'scores must unambiguous decide who advances',
+    'all zeroes is ambiguous'
+  );
+  
+  t.eq(
+    ffa.unscorable(match.id, [0, 3, 0, 0]),
+    'scores must unambiguous decide who advances',
+    'different scores at advance border is ambiguous'
+  );
+  
+  t.eq(
+    ffa.unscorable(match.id, [0, 0, 3, 0]),
+    'scores must unambiguous decide who advances',
+    'different scores at advance border is ambiguous'
+  );
+  
+  t.eq(
+    ffa.unscorable(match.id, [0, 3, 3, 0]),
+    null,
+    'some identical scores but advancers are unambiguous'
+  );
+});
