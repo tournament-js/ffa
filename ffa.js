@@ -219,7 +219,8 @@ FFA.prototype._safe = function (match) {
 
 FFA.prototype._verify = function (match, score) {
   var adv = this.advs[match.id.r - 1] || 0;
-  if (adv > 0 && score[adv] === score[adv - 1]) {
+  var sortedScore = score.slice().sort().reverse();
+  if (adv > 0 && sortedScore[adv] === sortedScore[adv - 1]) {
     return 'scores must unambiguous decide who advances';
   }
   if (!adv && this.limit > 0) {
@@ -227,7 +228,7 @@ FFA.prototype._verify = function (match, score) {
     // because of the ordering this always works!
     var lastNG = this.matches[this.matches.length-1].id.m;
     var cutoff = this.limit/lastNG; // NB: lastNG divides limit (from finalInvalid)
-    if (score[cutoff] === score[cutoff - 1]) {
+    if (sortedScore[cutoff] === sortedScore[cutoff - 1]) {
       return 'scores must decide who advances in final round with limits';
     }
   }
