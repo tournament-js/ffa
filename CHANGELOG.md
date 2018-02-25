@@ -1,3 +1,7 @@
+3.2.1 / 2018-02-25
+==================
+  * Fix a bug in `unscorable` not being strict enough - #4 via @Kauhsa
+
 3.2.0 / 2015-12-16
 ==================
   * Expose `FFA.Id` for consistency
