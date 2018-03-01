@@ -1,3 +1,7 @@
+3.2.2 / 2018-03-01
+==================
+  * Fix a bug in `unscorable` not using lexicographical sort - #6 via @Kauhsa
+
 3.2.1 / 2018-02-25
 ==================
   * Fix a bug in `unscorable` not being strict enough - #4 via @Kauhsa
