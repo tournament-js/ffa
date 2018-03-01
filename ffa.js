@@ -217,13 +217,9 @@ FFA.prototype._safe = function (match) {
   });
 };
 
-var compareInt = function(a, b) {
-  return a - b;
-}
-
 FFA.prototype._verify = function (match, score) {
   var adv = this.advs[match.id.r - 1] || 0;
-  var sortedScore = score.slice().sort(compareInt).reverse();
+  var sortedScore = score.slice().sort($.compare()).reverse();
   if (adv > 0 && sortedScore[adv] === sortedScore[adv - 1]) {
     return 'scores must unambiguous decide who advances';
   }
