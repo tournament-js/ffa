@@ -78,3 +78,14 @@ test('unambiguous', function *(t) {
     'some identical scores but advancers are unambiguous'
   );
 });
+
+test('unambiguous with large numbers', function *(t) {
+  var ffa = new FFA(24, { sizes: [6, 6, 6, 3], advancers: [3, 3, 3] });
+  var match = ffa.findMatch({s: 1, r: 1, m: 1})
+
+  t.eq(
+    ffa.unscorable(match.id, [13, 13, 11, 9, 1, 99]),
+    null,
+    'some identical scores but advancers are unambiguous'
+  );
+});
